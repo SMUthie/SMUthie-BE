@@ -1,12 +1,13 @@
 module.exports = function(app){
     const user = require('./userController');
     const jwtMiddleware = require('../../../config/jwtMiddleware');
+    const {upload} = require('../Image/s3Uploader')
 
     // 0. 테스트 API
     // app.get('/app/test', user.getTest)
 
     // 1. 유저 생성 (회원가입) API
-    app.post('/app/users', user.postUsers);
+    app.post('/app/users', upload.array('many'), user.postUsers);
 
     // 2. 유저 조회 API (+ 검색)
     app.get('/app/users',user.getUsers); 

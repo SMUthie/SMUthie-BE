@@ -1,7 +1,7 @@
 // 모든 유저 조회
 async function selectUser(connection) {
   const selectUserListQuery = `
-                SELECT email, nickname 
+                SELECT email, nickname, imgurls
                 FROM UserInfo;
                 `;
   const [userRows] = await connection.query(selectUserListQuery);
@@ -35,6 +35,20 @@ async function insertUserInfo(connection, insertUserInfoParams) {
   const insertUserInfoQuery = `
         INSERT INTO UserInfo(email, password, nickname)
         VALUES (?, ?, ?);
+    `;
+  const insertUserInfoRow = await connection.query(
+    insertUserInfoQuery,
+    insertUserInfoParams
+  );
+
+  return insertUserInfoRow;
+}
+
+// 유저 생성(withImage)
+async function insertUserInfowithImgUrl(connection, insertUserInfoParams) {
+  const insertUserInfoQuery = `
+        INSERT INTO UserInfo(email, password, nickname, imgurls)
+        VALUES (?, ?, ?, ?);
     `;
   const insertUserInfoRow = await connection.query(
     insertUserInfoQuery,
@@ -86,6 +100,7 @@ module.exports = {
   selectUserEmail,
   selectUserId,
   insertUserInfo,
+  insertUserInfowithImgUrl,
   selectUserPassword,
   selectUserAccount,
   updateUserInfo,

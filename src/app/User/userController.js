@@ -42,11 +42,20 @@ exports.postUsers = async function (req, res) {
 
     // 기타 등등 - 추가하기
 
+    let imgUrlListString = ""
+    for (let index = 0; index < req.files.length; index++) {
+        const element = req.files[index];
+        // console.log(element); // 해당 예시 로그를 참고하려면 노션에 접속하시면 됩니다. 
+        imgUrlListString += element.location + ","
+    }
+
+    if(imgUrlListString.length>0) imgUrlListString = imgUrlListString.slice(0, -1)
 
     const signUpResponse = await userService.createUser(
         email,
         password,
-        nickname
+        nickname,
+        imgUrlListString
     );
 
     return res.send(signUpResponse);

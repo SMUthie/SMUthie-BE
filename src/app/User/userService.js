@@ -13,7 +13,7 @@ const {connect} = require("http2");
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
-exports.createUser = async function (email, password, nickname) {
+exports.createUser = async function (email, password, nickname, imgurls=null) {
     try {
         // 이메일 중복 확인
         const emailRows = await userProvider.emailCheck(email);
@@ -26,14 +26,30 @@ exports.createUser = async function (email, password, nickname) {
             .update(password)
             .digest("hex");
 
-        const insertUserInfoParams = [email, hashedPassword, nickname];
+        if(imgurls == null){
 
-        const connection = await pool.getConnection(async (conn) => conn);
+            const insertUserInfoParams = [email, hashedPassword, nickname];
 
-        const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
-        console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
-        connection.release();
-        return response(baseResponse.SUCCESS);
+            const connection = await pool.getConnection(async (conn) => conn);
+
+            const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
+            console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
+            connection.release();
+            return response(baseResponse.SUCCESS);
+
+        }else{
+
+            const insertUserInfoParams = [email, hashedPassword, nickname, imgurls];
+
+            const connection = await pool.getConnection(async (conn) => conn);
+
+            const userIdResult = await userDao.insertUserInfowithImgUrl(connection, insertUserInfoParams);
+            console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
+            connection.release();
+            return response(baseResponse.SUCCESS);
+        }
+
+        
 
 
     } catch (err) {
