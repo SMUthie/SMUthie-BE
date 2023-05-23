@@ -1,4 +1,4 @@
-# SMUthie-FE
+# SMUthie-BE
 ### Commit Message Convention
 > [Feat] update README.md file about commit message convention
 
