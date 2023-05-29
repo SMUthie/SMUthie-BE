@@ -18,3 +18,16 @@ exports.retrieveSchoolCafe = async function () {
     return errResponse(baseResponse.DB_ERROR); 
   }
 }
+
+exports.retrieveAndamiro = async function () { 
+  try {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const menuListResult = await homeDao.selectAndamiro(connection);
+    connection.release();
+
+    return menuListResult;  
+  } catch (err) {
+    logger.error(`[ERROR] ${err.message}`);   
+    return errResponse(baseResponse.DB_ERROR); 
+  }
+}

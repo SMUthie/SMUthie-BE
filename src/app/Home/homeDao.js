@@ -10,7 +10,19 @@ async function selectSchoolCafe(connection) {
   return cafeRows;
 }
 
+// 안다미로 정보 조회
+async function selectAndamiro(connection) {
+  const selectAndamiroQuery = `
+                SELECT menu_name, price, likes, comment, image_url
+                FROM Menu
+                WHERE store_idx = 1;
+                `;
+  const [menuRows] = await connection.query(selectAndamiroQuery);
+  return menuRows;
+}
+
 module.exports = {
   selectSchoolCafe,
+  selectAndamiro,
 
 };
