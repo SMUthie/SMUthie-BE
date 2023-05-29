@@ -14,7 +14,7 @@ async function selectUserStudentId(connection, student_id) {
 
 async function selectLoginUserStudentId(connection, student_id) {
   const selectLoginUserStudentIdQuery = `
-                 SELECT user_idx, pw, stat
+                 SELECT user_idx, pw, stat, token
                  FROM User
                  WHERE student_id=?;
                  `;
@@ -48,9 +48,22 @@ async function updateUserInfo(connection, id, nickname) {
   return updateUserRow[0];
 }
 
+async function updateUserToken(connection, user_idx, token) {
+  const updateUserTokenQuery = `
+  UPDATE User
+  SET token = ?
+  WHERE user_idx = ?;`;
+  const updateUserTokenRow = await connection.query(updateUserTokenQuery, [
+    token,
+    user_idx,
+  ]);
+  return updateUserTokenRow[0];
+}
+
 module.exports = {
   selectUserStudentId,
   selectLoginUserStudentId,
   insertUserInfo,
   updateUserInfo,
+  updateUserToken,
 };
