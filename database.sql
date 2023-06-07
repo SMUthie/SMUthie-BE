@@ -6,7 +6,9 @@ CREATE TABLE `User` (
 	`token`	mediumtext	NULL	COMMENT '로그인시 사용',
 	`created_at`	timestamp	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	timestamp	NOT NULL	DEFAULT CURRENT_TIMESTAMP	COMMENT 'ON UPDATE CURRENT_TIMESTAMP(업데이트 시 현재 시간으로 설정)',
-	`stat`	varchar(2)	NOT NULL	DEFAULT 'A'	COMMENT '활성 : A, 탈퇴 : D'
+	`stat`	varchar(2)	NOT NULL	DEFAULT 'A'	COMMENT '활성 : A, 탈퇴 : D',
+	`auth_code`	Varchar(10)	 NULL	COMMENT '각종 인증 이메일에 사용',
+	`level_times`	Int	NOT NULL DEFAULT 0
 );
 
 CREATE TABLE `Store` (
@@ -67,6 +69,7 @@ CREATE TABLE `Report` (
 	`user_idx`	Int	NOT NULL,
 	`content`	mediumtext	NOT NULL,
 	`likes`	Int	NOT NULL	DEFAULT 0,
+	`unlikes`	Int	NOT NULL	DEFAULT 0,
 	`category`	tinytext	NOT NULL	COMMENT '폐업, 메뉴 종류, 가격 정보, 전화번호, 영업 시간'
 );
 
@@ -75,12 +78,22 @@ CREATE TABLE `UserLikedMenu` (
 	`menu_idx`	Int	NOT NULL
 );
 
-CREATE TABLE `CopyOfUserLikedMenu` (
+CREATE TABLE `UserLikedReview` (
 	`user_idx`	Int	NOT NULL,
 	`review_idx`	Int	NOT NULL
 );
 
-CREATE TABLE `CopyOfCopyOfUserLikedMenu` (
+CREATE TABLE `UserUnlikedReview` (
+	`user_idx`	Int	NOT NULL,
+	`review_idx`	Int	NOT NULL
+);
+
+CREATE TABLE `UserLikedReport` (
+	`user_idx`	Int	NOT NULL,
+	`report_idx`	Int	NOT NULL	
+);
+
+CREATE TABLE `UserUnlikedReport` (
 	`user_idx`	Int	NOT NULL,
 	`report_idx`	Int	NOT NULL	
 );
@@ -134,28 +147,56 @@ REFERENCES `Menu` (
 	`menu_idx`
 );
 
-ALTER TABLE `CopyOfUserLikedMenu` ADD CONSTRAINT `FK_User_TO_CopyOfUserLikedMenu_1` FOREIGN KEY (
+ALTER TABLE `UserLikedReview` ADD CONSTRAINT `FK_User_TO_UserLikedReview_1` FOREIGN KEY (
 	`user_idx`
 )
 REFERENCES `User` (
 	`user_idx`
 );
 
-ALTER TABLE `CopyOfUserLikedMenu` ADD CONSTRAINT `FK_Review_TO_CopyOfUserLikedMenu_1` FOREIGN KEY (
+ALTER TABLE `UserLikedReview` ADD CONSTRAINT `FK_Review_TO_UserLikedReview_1` FOREIGN KEY (
 	`review_idx`
 )
 REFERENCES `Review` (
 	`review_idx`
 );
 
-ALTER TABLE `CopyOfCopyOfUserLikedMenu` ADD CONSTRAINT `FK_User_TO_CopyOfCopyOfUserLikedMenu_1` FOREIGN KEY (
+ALTER TABLE `UserUnlikedReview` ADD CONSTRAINT `FK_User_TO_UserUnlikedReview_1` FOREIGN KEY (
 	`user_idx`
 )
 REFERENCES `User` (
 	`user_idx`
 );
 
-ALTER TABLE `CopyOfCopyOfUserLikedMenu` ADD CONSTRAINT `FK_Report_TO_CopyOfCopyOfUserLikedMenu_1` FOREIGN KEY (
+ALTER TABLE `UserUnlikedReview` ADD CONSTRAINT `FK_Review_TO_UserUnlikedReview_1` FOREIGN KEY (
+	`review_idx`
+)
+REFERENCES `Review` (
+	`review_idx`
+);
+
+ALTER TABLE `UserLikedReport` ADD CONSTRAINT `FK_User_TO_UserLikedReport_1` FOREIGN KEY (
+	`user_idx`
+)
+REFERENCES `User` (
+	`user_idx`
+);
+
+ALTER TABLE `UserLikedReport` ADD CONSTRAINT `FK_Report_TO_UserLikedReport_1` FOREIGN KEY (
+	`report_idx`
+)
+REFERENCES `Report` (
+	`report_idx`
+);
+
+ALTER TABLE `UserUnlikedReport` ADD CONSTRAINT `FK_User_TO_UserUnlikedReport_1` FOREIGN KEY (
+	`user_idx`
+)
+REFERENCES `User` (
+	`user_idx`
+);
+
+ALTER TABLE `UserUnlikedReport` ADD CONSTRAINT `FK_Report_TO_UserUnlikedReport_1` FOREIGN KEY (
 	`report_idx`
 )
 REFERENCES `Report` (
