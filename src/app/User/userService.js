@@ -79,7 +79,7 @@ exports.postSignIn = async function (student_id, password) {
       {
         user_id: userRows[0].user_idx,
       }, // 토큰의 내용(payload)
-      secret_config.jwtsecret, // 비밀키
+      process.env.JWTSECRET, // 비밀키
       {
         expiresIn: '14d',
         subject: 'user',
@@ -89,7 +89,7 @@ exports.postSignIn = async function (student_id, password) {
     //TODO: 다중 다바이스 로그인을 위해 동일한 refreshToken발급 필요.
     let refreshToken = await jwt.sign(
       {}, // 토큰의 내용(payload)
-      secret_config.jwtsecret, // 비밀키
+      process.env.JWTSECRET, // 비밀키
       {
         expiresIn: '93d',
         subject: 'user',
