@@ -60,10 +60,24 @@ async function updateUserToken(connection, user_idx, token) {
   return updateUserTokenRow[0];
 }
 
+async function selectRefreshTokenUseUserIdx(connection, userIdx) {
+  const selectUserRefreshTokenQuery = `
+                SELECT user_idx, token
+                FROM User 
+                WHERE user_idx = ?;
+                `;
+  const [userRTokenInfoRows] = await connection.query(
+    selectUserRefreshTokenQuery,
+    userIdx
+  );
+  return userRTokenInfoRows;
+}
+
 module.exports = {
   selectUserStudentId,
   selectLoginUserStudentId,
   insertUserInfo,
   updateUserInfo,
   updateUserToken,
+  selectRefreshTokenUseUserIdx,
 };

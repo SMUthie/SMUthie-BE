@@ -1,4 +1,3 @@
-const jwtMiddleware = require('../../../config/jwtMiddleware');
 const userProvider = require('../../app/User/userProvider');
 const userService = require('../../app/User/userService');
 const baseResponse = require('../../../config/baseResponseStatus');
@@ -6,6 +5,7 @@ const { response, errResponse } = require('../../../config/response');
 
 const regexEmail = require('regex-email');
 const { emit } = require('nodemon');
+const baseResponseStatus = require('../../../config/baseResponseStatus');
 
 /**
  * API No. 0
@@ -86,12 +86,6 @@ exports.login = async function (req, res) {
  */
 exports.patchUsers = async function (req, res) {
   // jwt - userId, path variable :userId
-
-  const userIdFromJWT = req.verifiedToken.userId;
-
-  const userId = req.params.userId;
-  const nickname = req.body.nickname;
-
   if (userIdFromJWT != userId) {
     res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
   } else {
@@ -103,11 +97,28 @@ exports.patchUsers = async function (req, res) {
   }
 };
 
-/** JWT 토큰 검증 API
- * [GET] /app/auto-login
- */
-exports.check = async function (req, res) {
-  const userIdResult = req.verifiedToken.userId;
-  console.log(userIdResult);
-  return res.send(response(baseResponse.TOKEN_VERIFICATION_SUCCESS));
+exports.refreshJWT = async function (req, res) {
+  const REFRESH_TOKEN = req.headers['x-refresh-token'];
+  const USER_IDX = req.headers['x-user-idx'];
+  if (!REFRESH_TOKEN) {
+    return res.send(errResponse(baseResponse.TOKEN_EMPTY));
+  } else if (!USER_IDX) {
+    return res.send(errResponse(baseResponse.USER_IDX_EMPTY));
+  }
+
+  const newAccessToken = await userProvider.refreshTokenWithUserIdx(
+    REFRESH_TOKEN,
+    USER_IDX
+  );
+  return res.send(newAccessToken);
+};
+
+exports.test = function (req, res) {
+  const userIdxFromJWT = req.user_idx;
+  console.log(userIdxFromJWT);
+  return res.send(
+    response(baseResponseStatus.SUCCESS, {
+      user_idx: userIdxFromJWT,
+    })
+  );
 };

@@ -1,6 +1,5 @@
 const { logger } = require('../../../config/winston');
 const { pool } = require('../../../config/database');
-const secret_config = require('../../../config/secret');
 const userProvider = require('./userProvider');
 const userDao = require('./userDao');
 const baseResponse = require('../../../config/baseResponseStatus');
@@ -9,8 +8,7 @@ const { errResponse } = require('../../../config/response');
 
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const { connect } = require('http2');
-const { log } = require('console');
+const { signAToken, signRToken } = require('../../../util/jwtUtil');
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 exports.createUser = async function (student_id, password, nickname) {
@@ -22,9 +20,9 @@ exports.createUser = async function (student_id, password, nickname) {
 
     // 비밀번호 암호화
     const hashedPassword = await crypto
-      .createHash('sha512')
+      .createHash(process.env.PASSWORD_HASH)
       .update(password)
-      .digest('base64');
+      .digest(process.env.PASSWORD_DIGEST);
 
     const insertUserInfoParams = [student_id, hashedPassword, nickname];
 
@@ -65,9 +63,9 @@ exports.postSignIn = async function (student_id, password) {
 
     const selectedUserPassword = userRows[0].pw;
     const reqHashedPassword = await crypto
-      .createHash('sha512')
+      .createHash(process.env.PASSWORD_HASH)
       .update(password)
-      .digest('base64');
+      .digest(process.env.PASSWORD_DIGEST);
 
     if (selectedUserPassword !== reqHashedPassword) {
       logger.info(`Login Fail: [Password Wrong](student_id=${student_id})`);
@@ -75,40 +73,24 @@ exports.postSignIn = async function (student_id, password) {
     }
 
     //토큰 생성 Service
-    let accessToken = await jwt.sign(
-      {
-        user_id: userRows[0].user_idx,
-      }, // 토큰의 내용(payload)
-      process.env.JWTSECRET, // 비밀키
-      {
-        expiresIn: '14d',
-        subject: 'user',
-      } // 유효 기간 14일
-    );
+    const NEW_A_TOKEN = signAToken(userRows[0].user_idx);
+    const NEW_R_TOKEN = signRToken();
 
     //TODO: 다중 다바이스 로그인을 위해 동일한 refreshToken발급 필요.
-    let refreshToken = await jwt.sign(
-      {}, // 토큰의 내용(payload)
-      process.env.JWTSECRET, // 비밀키
-      {
-        expiresIn: '93d',
-        subject: 'user',
-      } // 유효 기간 93일
-    );
 
     //refreshToken DB저장
     const connection = await pool.getConnection(async (conn) => conn);
     await userDao.updateUserToken(
       connection,
       userRows[0].user_idx,
-      refreshToken
+      NEW_R_TOKEN
     );
     connection.release();
 
     return response(baseResponse.SUCCESS, {
-      user_id: userRows[0].user_idx,
-      access_token: accessToken,
-      refresh_token: refreshToken,
+      user_idx: userRows[0].user_idx,
+      access_token: NEW_A_TOKEN,
+      refresh_token: NEW_R_TOKEN,
     });
   } catch (err) {
     logger.error(
