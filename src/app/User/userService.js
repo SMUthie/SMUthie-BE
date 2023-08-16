@@ -142,6 +142,37 @@ exports.findPassword = async function (schoolId) {
   }
 };
 
+exports.editUserNickname = async function (userIdx, newNickname) {
+  try {
+    //1. check used nickname
+    var connection = await pool.getConnection(async (conn) => conn);
+    const usersInfoByIndex = await userDao.selectUserAndStatByNickname(
+      connection,
+      newNickname
+    );
+    connection.release();
+
+    if (usersInfoByIndex.length >= 1) {
+      return errResponse(baseResponse.SIGNUP_REDUNDANT_NICKNAME);
+    }
+
+    //2. change nickname
+    var connection = await pool.getConnection(async (conn) => conn);
+    const changedUserInfo = await userDao.updateUserNickname(
+      connection,
+      userIdx,
+      newNickname
+    );
+    connection.release();
+
+    //3. return
+    return response(baseResponse.SUCCESS);
+  } catch (err) {
+    logger.error(`App - editUserNickname Service error\n: ${err.message}`);
+    return errResponse(baseResponse.DB_ERROR);
+  }
+};
+
 exports.editUser = async function (id, nickname) {
   try {
     console.log(id);

@@ -12,7 +12,7 @@ async function selectUserStudentId(connection, student_id) {
   return studentIdRows;
 }
 
-// 이메일로 회원 조회
+// 학번으로 회원 조회
 async function selectUserAndStatByStudentId(connection, student_id) {
   const selectUserStudentIdQuery = `
                 SELECT user_idx, stat
@@ -22,6 +22,34 @@ async function selectUserAndStatByStudentId(connection, student_id) {
   const [studentIdRows] = await connection.query(
     selectUserStudentIdQuery,
     student_id
+  );
+  return studentIdRows;
+}
+
+// 인덱스로 회원 조회
+async function selectUserAndStatByUserIdx(connection, userIdx) {
+  const selectUserStudentIdQuery = `
+                SELECT user_idx, stat
+                FROM User 
+                WHERE user_idx = ?;
+                `;
+  const [studentIdRows] = await connection.query(
+    selectUserStudentIdQuery,
+    userIdx
+  );
+  return studentIdRows;
+}
+
+// 인덱스로 회원 조회
+async function selectUserAndStatByNickname(connection, nickname) {
+  const selectUserStudentIdQuery = `
+                SELECT user_idx, stat
+                FROM User 
+                WHERE nickname = ?;
+                `;
+  const [studentIdRows] = await connection.query(
+    selectUserStudentIdQuery,
+    nickname
   );
   return studentIdRows;
 }
@@ -53,12 +81,15 @@ async function insertUserInfo(connection, insertUserInfoParams) {
   return insertUserInfoRow;
 }
 
-async function updateUserInfo(connection, id, nickname) {
+async function updateUserNickname(connection, user_idx, newNickname) {
   const updateUserQuery = `
-  UPDATE UserInfo 
+  UPDATE User 
   SET nickname = ?
-  WHERE id = ?;`;
-  const updateUserRow = await connection.query(updateUserQuery, [nickname, id]);
+  WHERE user_idx = ?;`;
+  const updateUserRow = await connection.query(updateUserQuery, [
+    newNickname,
+    user_idx,
+  ]);
   return updateUserRow[0];
 }
 
@@ -99,9 +130,11 @@ async function selectRefreshTokenUseUserIdx(connection, userIdx) {
 module.exports = {
   selectUserStudentId,
   selectUserAndStatByStudentId,
+  selectUserAndStatByUserIdx,
   selectLoginUserStudentId,
+  selectUserAndStatByNickname,
   insertUserInfo,
-  updateUserInfo,
+  updateUserNickname,
   updateUserToken,
   updateUserPassword,
   selectRefreshTokenUseUserIdx,

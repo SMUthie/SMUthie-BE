@@ -121,6 +121,24 @@ exports.findPassword = async function (req, res) {
   return res.send(result);
 };
 
+/**
+ * API No. ?
+ * API Name : 회원 정보 수정 API + JWT
+ * [PATCH] /app/user/changeName
+ * body : nickname
+ */
+exports.changeName = async function (req, res) {
+  const NEW_NICKNAME = req.body['nickname'];
+  if (!NEW_NICKNAME)
+    return res.send(errResponse(baseResponse.USER_NICKNAME_EMPTY));
+
+  const editUserNickname = await userService.editUserNickname(
+    req.user_idx,
+    NEW_NICKNAME
+  );
+  return res.send(editUserNickname);
+};
+
 exports.test = function (req, res) {
   const userIdxFromJWT = req.user_idx;
   console.log(userIdxFromJWT);

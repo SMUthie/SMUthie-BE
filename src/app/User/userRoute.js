@@ -21,5 +21,7 @@ module.exports = function (app) {
 
   app.post('/app/user/tempPW', user.findPassword);
 
+  app.patch('/app/user/changeName', verifyAToken, user.changeName);
+
   app.patch('/app/user/:userId', user.patchUsers);
 };
