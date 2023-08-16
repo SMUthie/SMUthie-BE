@@ -19,5 +19,7 @@ module.exports = function (app) {
 
   app.get('/app/user/refresh', verifyAToken, user.refreshJWT);
 
+  app.post('/app/user/tempPW', user.findPassword);
+
   app.patch('/app/user/:userId', user.patchUsers);
 };

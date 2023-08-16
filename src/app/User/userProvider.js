@@ -18,6 +18,17 @@ exports.studentIdCheck = async function (student_id) {
   return StudentIdCheckResult;
 };
 
+exports.userStatCheckBySchoolId = async function (student_id) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const studentIdCheckResult = await userDao.selectUserAndStatByStudentId(
+    connection,
+    student_id
+  );
+  connection.release();
+
+  return studentIdCheckResult;
+};
+
 exports.userLoginCheck = async function (student_id) {
   const connection = await pool.getConnection(async (conn) => conn);
   const loginUserResult = await userDao.selectLoginUserStudentId(

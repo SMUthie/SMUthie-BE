@@ -102,9 +102,50 @@ exports.postSignIn = async function (student_id, password) {
   }
 };
 
+exports.findPassword = async function (schoolId) {
+  try {
+    const UserInfoBySchoolId = await userProvider.userStatCheckBySchoolId(
+      schoolId
+    );
+
+    //조회된 사람이 없거나 탈퇴했으면
+    if (UserInfoBySchoolId.length != 1 || UserInfoBySchoolId[0].stat == 'D') {
+      return errResponse(baseResponse.USER_ID_NOT_MATCH);
+    }
+
+    const randomPassword = Math.random().toString().slice(2, 12);
+
+    logger.warn(
+      `Find Password - schoolId: ${schoolId}, newPassword: ${randomPassword}`
+    );
+
+    // 비밀번호 암호화
+    const hashedPassword = await crypto
+      .createHash(process.env.PASSWORD_HASH)
+      .update(randomPassword)
+      .digest(process.env.PASSWORD_DIGEST);
+
+    const connection = await pool.getConnection(async (conn) => conn);
+    const editPasswordResult = await userDao.updateUserPassword(
+      connection,
+      UserInfoBySchoolId[0].user_idx,
+      hashedPassword
+    );
+    connection.release();
+
+    return response(baseResponse.SUCCESS, {
+      temp: `임시 비번: ${randomPassword}. 해당 api는 이메일 기능을 구현하지 못해서 일단 이렇게 알려드림.`,
+    });
+  } catch (err) {
+    logger.error(`App - findPassword Service error\n: ${err.message}`);
+    return errResponse(baseResponse.DB_ERROR);
+  }
+};
+
 exports.editUser = async function (id, nickname) {
   try {
     console.log(id);
+
     const connection = await pool.getConnection(async (conn) => conn);
     const editUserResult = await userDao.updateUserInfo(
       connection,

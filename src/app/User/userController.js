@@ -111,6 +111,16 @@ exports.refreshJWT = async function (req, res) {
   return res.send(newAccessToken);
 };
 
+exports.findPassword = async function (req, res) {
+  const SCHOOL_ID = req.body['schoolId'];
+  if (!SCHOOL_ID) {
+    return res.send(errResponse(baseResponse.SCHOOL_ID_EMPTY));
+  }
+
+  const result = await userService.findPassword(SCHOOL_ID);
+  return res.send(result);
+};
+
 exports.test = function (req, res) {
   const userIdxFromJWT = req.user_idx;
   console.log(userIdxFromJWT);

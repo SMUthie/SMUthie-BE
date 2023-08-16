@@ -8,6 +8,11 @@ module.exports = {
     code: 2000,
     message: 'JWT 토큰을 입력해주세요.',
   },
+  SCHOOL_ID_EMPTY: {
+    isSuccess: false,
+    code: 2000,
+    message: '학번을 입력해주세요.',
+  },
   TOKEN_VERIFICATION_FAILURE: {
     isSuccess: false,
     code: 3000,

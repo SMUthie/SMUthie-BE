@@ -12,6 +12,20 @@ async function selectUserStudentId(connection, student_id) {
   return studentIdRows;
 }
 
+// 이메일로 회원 조회
+async function selectUserAndStatByStudentId(connection, student_id) {
+  const selectUserStudentIdQuery = `
+                SELECT user_idx, stat
+                FROM User 
+                WHERE student_id = ?;
+                `;
+  const [studentIdRows] = await connection.query(
+    selectUserStudentIdQuery,
+    student_id
+  );
+  return studentIdRows;
+}
+
 async function selectLoginUserStudentId(connection, student_id) {
   const selectLoginUserStudentIdQuery = `
                  SELECT user_idx, pw, stat, token
@@ -48,6 +62,15 @@ async function updateUserInfo(connection, id, nickname) {
   return updateUserRow[0];
 }
 
+async function updateUserPassword(connection, id, password) {
+  const updateUserQuery = `
+  UPDATE User
+  SET pw = ?
+  WHERE user_idx = ?;`;
+  const updateUserRow = await connection.query(updateUserQuery, [password, id]);
+  return updateUserRow[0];
+}
+
 async function updateUserToken(connection, user_idx, token) {
   const updateUserTokenQuery = `
   UPDATE User
@@ -75,9 +98,11 @@ async function selectRefreshTokenUseUserIdx(connection, userIdx) {
 
 module.exports = {
   selectUserStudentId,
+  selectUserAndStatByStudentId,
   selectLoginUserStudentId,
   insertUserInfo,
   updateUserInfo,
   updateUserToken,
+  updateUserPassword,
   selectRefreshTokenUseUserIdx,
 };
