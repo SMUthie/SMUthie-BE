@@ -17,7 +17,7 @@ module.exports = function (app) {
   //Access Token 인증 예제
   app.get('/app/user/test', verifyAToken, user.test);
 
-  app.get('/app/user/refresh', user.refreshJWT);
+  app.get('/app/user/refresh', verifyAToken, user.refreshJWT);
 
   app.patch('/app/user/:userId', user.patchUsers);
 };

@@ -99,11 +99,9 @@ exports.patchUsers = async function (req, res) {
 
 exports.refreshJWT = async function (req, res) {
   const REFRESH_TOKEN = req.headers['x-refresh-token'];
-  const USER_IDX = req.headers['x-user-idx'];
+  const USER_IDX = req.user_idx;
   if (!REFRESH_TOKEN) {
     return res.send(errResponse(baseResponse.TOKEN_EMPTY));
-  } else if (!USER_IDX) {
-    return res.send(errResponse(baseResponse.USER_IDX_EMPTY));
   }
 
   const newAccessToken = await userProvider.refreshTokenWithUserIdx(
