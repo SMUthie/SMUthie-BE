@@ -1,6 +1,5 @@
 const { logger } = require('../../../config/winston');
 const { pool } = require('../../../config/database');
-const secret_config = require('../../../config/secret');
 const userProvider = require('./userProvider');
 const userDao = require('./userDao');
 const baseResponse = require('../../../config/baseResponseStatus');
@@ -9,8 +8,7 @@ const { errResponse } = require('../../../config/response');
 
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const { connect } = require('http2');
-const { log } = require('console');
+const { signAToken, signRToken } = require('../../../util/jwtUtil');
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 exports.createUser = async function (student_id, password, nickname) {
@@ -22,9 +20,9 @@ exports.createUser = async function (student_id, password, nickname) {
 
     // 비밀번호 암호화
     const hashedPassword = await crypto
-      .createHash('sha512')
+      .createHash(process.env.PASSWORD_HASH)
       .update(password)
-      .digest('base64');
+      .digest(process.env.PASSWORD_DIGEST);
 
     const insertUserInfoParams = [student_id, hashedPassword, nickname];
 
@@ -65,9 +63,9 @@ exports.postSignIn = async function (student_id, password) {
 
     const selectedUserPassword = userRows[0].pw;
     const reqHashedPassword = await crypto
-      .createHash('sha512')
+      .createHash(process.env.PASSWORD_HASH)
       .update(password)
-      .digest('base64');
+      .digest(process.env.PASSWORD_DIGEST);
 
     if (selectedUserPassword !== reqHashedPassword) {
       logger.info(`Login Fail: [Password Wrong](student_id=${student_id})`);
@@ -75,40 +73,24 @@ exports.postSignIn = async function (student_id, password) {
     }
 
     //토큰 생성 Service
-    let accessToken = await jwt.sign(
-      {
-        user_id: userRows[0].user_idx,
-      }, // 토큰의 내용(payload)
-      process.env.JWTSECRET, // 비밀키
-      {
-        expiresIn: '14d',
-        subject: 'user',
-      } // 유효 기간 14일
-    );
+    const NEW_A_TOKEN = signAToken(userRows[0].user_idx);
+    const NEW_R_TOKEN = signRToken();
 
     //TODO: 다중 다바이스 로그인을 위해 동일한 refreshToken발급 필요.
-    let refreshToken = await jwt.sign(
-      {}, // 토큰의 내용(payload)
-      process.env.JWTSECRET, // 비밀키
-      {
-        expiresIn: '93d',
-        subject: 'user',
-      } // 유효 기간 93일
-    );
 
     //refreshToken DB저장
     const connection = await pool.getConnection(async (conn) => conn);
     await userDao.updateUserToken(
       connection,
       userRows[0].user_idx,
-      refreshToken
+      NEW_R_TOKEN
     );
     connection.release();
 
     return response(baseResponse.SUCCESS, {
-      user_id: userRows[0].user_idx,
-      access_token: accessToken,
-      refresh_token: refreshToken,
+      user_idx: userRows[0].user_idx,
+      access_token: NEW_A_TOKEN,
+      refresh_token: NEW_R_TOKEN,
     });
   } catch (err) {
     logger.error(
@@ -120,9 +102,81 @@ exports.postSignIn = async function (student_id, password) {
   }
 };
 
+exports.findPassword = async function (schoolId) {
+  try {
+    const UserInfoBySchoolId = await userProvider.userStatCheckBySchoolId(
+      schoolId
+    );
+
+    //조회된 사람이 없거나 탈퇴했으면
+    if (UserInfoBySchoolId.length != 1 || UserInfoBySchoolId[0].stat == 'D') {
+      return errResponse(baseResponse.USER_ID_NOT_MATCH);
+    }
+
+    const randomPassword = Math.random().toString().slice(2, 12);
+
+    logger.warn(
+      `Find Password - schoolId: ${schoolId}, newPassword: ${randomPassword}`
+    );
+
+    // 비밀번호 암호화
+    const hashedPassword = await crypto
+      .createHash(process.env.PASSWORD_HASH)
+      .update(randomPassword)
+      .digest(process.env.PASSWORD_DIGEST);
+
+    const connection = await pool.getConnection(async (conn) => conn);
+    const editPasswordResult = await userDao.updateUserPassword(
+      connection,
+      UserInfoBySchoolId[0].user_idx,
+      hashedPassword
+    );
+    connection.release();
+
+    return response(baseResponse.SUCCESS, {
+      temp: `임시 비번: ${randomPassword}. 해당 api는 이메일 기능을 구현하지 못해서 일단 이렇게 알려드림.`,
+    });
+  } catch (err) {
+    logger.error(`App - findPassword Service error\n: ${err.message}`);
+    return errResponse(baseResponse.DB_ERROR);
+  }
+};
+
+exports.editUserNickname = async function (userIdx, newNickname) {
+  try {
+    //1. check used nickname
+    var connection = await pool.getConnection(async (conn) => conn);
+    const usersInfoByIndex = await userDao.selectUserAndStatByNickname(
+      connection,
+      newNickname
+    );
+    connection.release();
+
+    if (usersInfoByIndex.length >= 1) {
+      return errResponse(baseResponse.SIGNUP_REDUNDANT_NICKNAME);
+    }
+
+    //2. change nickname
+    var connection = await pool.getConnection(async (conn) => conn);
+    const changedUserInfo = await userDao.updateUserNickname(
+      connection,
+      userIdx,
+      newNickname
+    );
+    connection.release();
+
+    //3. return
+    return response(baseResponse.SUCCESS);
+  } catch (err) {
+    logger.error(`App - editUserNickname Service error\n: ${err.message}`);
+    return errResponse(baseResponse.DB_ERROR);
+  }
+};
+
 exports.editUser = async function (id, nickname) {
   try {
     console.log(id);
+
     const connection = await pool.getConnection(async (conn) => conn);
     const editUserResult = await userDao.updateUserInfo(
       connection,

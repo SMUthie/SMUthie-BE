@@ -1,6 +1,9 @@
+const baseResponseStatus = require('../../../config/baseResponseStatus');
+const { response } = require('../../../config/response');
+
 module.exports = function (app) {
   const user = require('./userController');
-  const jwtMiddleware = require('../../../config/jwtMiddleware');
+  const { verifyAToken } = require('../../../config/jwtVerify');
 
   // 0. 테스트 API
   // app.get('/app/test', user.getTest)
@@ -11,6 +14,14 @@ module.exports = function (app) {
   // 2. 로그인 하기 API (JWT 생성)
   app.post('/app/user/login', user.login);
 
-  // 회원 정보 수정 API (JWT 검증 및 Validation - 메소드 체이닝 방식으로 jwtMiddleware 사용)
-  app.patch('/app/users/:userId', jwtMiddleware, user.patchUsers);
+  //Access Token 인증 예제
+  app.get('/app/user/test', verifyAToken, user.test);
+
+  app.get('/app/user/refresh', verifyAToken, user.refreshJWT);
+
+  app.post('/app/user/tempPW', user.findPassword);
+
+  app.patch('/app/user/changeName', verifyAToken, user.changeName);
+
+  app.patch('/app/user/:userId', user.patchUsers);
 };
