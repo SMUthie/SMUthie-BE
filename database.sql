@@ -39,7 +39,8 @@ CREATE TABLE `Review` (
 	`content`	mediumtext	NOT NULL,
 	`likes`	Int	NOT NULL	DEFAULT 0,
 	`unlikes`	Int	NOT NULL	DEFAULT 0,
-	`image_url`	mediumtext	NOT NULL	COMMENT '콤마로 구분'
+	`image_url`	mediumtext	NOT NULL	COMMENT '콤마로 구분',
+	`created_at`	DATETIME	NOT NULL	DEFAULT	CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `Menu` (
@@ -70,7 +71,8 @@ CREATE TABLE `Report` (
 	`content`	mediumtext	NOT NULL,
 	`likes`	Int	NOT NULL	DEFAULT 0,
 	`unlikes`	Int	NOT NULL	DEFAULT 0,
-	`category`	tinytext	NOT NULL	COMMENT '폐업, 메뉴 종류, 가격 정보, 전화번호, 영업 시간'
+	`category`	tinytext	NOT NULL	COMMENT '폐업, 메뉴 종류, 가격 정보, 전화번호, 영업 시간',
+	`created_at`	DATETIME	NOT NULL	DEFAULT	CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `UserLikedMenu` (
