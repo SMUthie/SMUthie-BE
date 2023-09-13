@@ -2,7 +2,7 @@ name: deploy-develop
 
 on:
   push:
-    branches: [feature/user]
+    branches: [develop]
   pull_request:
     branches: [develop]
 
