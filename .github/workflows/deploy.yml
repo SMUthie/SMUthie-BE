@@ -32,7 +32,6 @@ jobs:
         run: |
           pwd
           touch .env
-          echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
           echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
           echo JWTSECRET=${{ secrets.JWTSECRET }} >> .env
           echo LOCAL_DB_HOST=${{ secrets.LOCAL_DB_HOST }} >> .env
