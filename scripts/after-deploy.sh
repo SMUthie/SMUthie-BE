@@ -1,3 +1,3 @@
 #!/bin/bash
 
-pm2 restart index
+pm2 restart ../index.js
