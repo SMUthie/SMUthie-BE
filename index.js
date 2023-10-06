@@ -1,8 +1,7 @@
 const express = require('./config/express');
 const { logger } = require('./config/winston');
-const dotenv = require('dotenv');
-
-dotenv.config(); //env설정
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') }); //env설정
 
 const port = process.env.PORT || 3000;
 express().listen(port);

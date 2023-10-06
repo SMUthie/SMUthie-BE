@@ -1,0 +1,72 @@
+name: deploy-develop
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-20.04
+
+    strategy:
+      matrix:
+        node-version: [18.17.1]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - name: ✅ 체크아웃 source code.
+        uses: actions/checkout@v3
+
+      - name: ⚙️ ${{ matrix.node-version }} 버전의 노드로 세팅합니다.
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Check Npm -v
+        run: npm -v
+
+      - name: ⚙️ 환경변수를 설정합니다.
+        working-directory: ./
+        run: |
+          pwd
+          touch .env
+          echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
+          echo JWTSECRET=${{ secrets.JWTSECRET }} >> .env
+          echo LOCAL_DB_HOST=${{ secrets.LOCAL_DB_HOST }} >> .env
+          echo LOCAL_DB_PORT=${{ secrets.LOCAL_DB_PORT }} >> .env
+          echo LOCAL_DB_USERNAME=${{ secrets.LOCAL_DB_USERNAME }} >> .env
+          echo LOCAL_DB_PASSWORD=${{ secrets.LOCAL_DB_PASSWORD }} >> .env
+          echo LOCAL_DB_DATABASE=${{ secrets.LOCAL_DB_DATABASE }} >> .env
+          echo JWT_SIGN_ALGORITHM=${{ secrets.JWT_SIGN_ALGORITHM }} >> .env
+          echo JWT_ACCESS_TOKEN_EXPIRESIN=${{ secrets.JWT_ACCESS_TOKEN_EXPIRESIN }} >> .env
+          echo JWT_REFRESH_TOKEN_EXPIRESIN=${{ secrets.JWT_REFRESH_TOKEN_EXPIRESIN }} >> .env
+          echo PASSWORD_HASH=${{ secrets.PASSWORD_HASH }} >> .env
+          echo PASSWORD_DIGEST=${{ secrets.PASSWORD_DIGEST }} >> .env
+          cat .env
+
+      - name: dependency #필요한 dependency들을 설치하고 빌드
+        working-directory: ./
+        run: |
+          npm i
+
+      - name: zip file
+        run: zip -r smuthie.zip ../SMUthie-BE
+
+      - name: 🌎 AWS에 접속
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: 🦖 S3에 압축된 서버 코드를 업로드
+        run: aws s3 cp --region ap-northeast-2 ./smuthie.zip s3://smuthie/deploy/
+
+      - name: 🚀 AWS codeDeploy로 배포를 시작
+        run: aws deploy create-deployment
+          --application-name smuthie
+          --deployment-config-name CodeDeployDefault.OneAtATime
+          --deployment-group-name dev
+          --s3-location bucket=smuthie,bundleType=zip,key=deploy/smuthie.zip
