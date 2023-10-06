@@ -9,6 +9,8 @@ const { errResponse } = require('../../../config/response');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { signAToken, signRToken } = require('../../../util/jwtUtil');
+const { sendEmailUseSchoolId } = require('../../../util/email');
+const { rendernewPasswordEmail } = require('../../../util/ejsRender');
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 exports.createUser = async function (student_id, password, nickname) {
@@ -133,8 +135,16 @@ exports.findPassword = async function (schoolId) {
     );
     connection.release();
 
+    const PW_EMAIL_HTML = await rendernewPasswordEmail(randomPassword);
+    sendEmailUseSchoolId(
+      schoolId,
+      '임시 비밀번호가 생성되었습니다.',
+      PW_EMAIL_HTML
+    );
+
+    //TODO: 임시 비번 반환 표시 삭제
     return response(baseResponse.SUCCESS, {
-      temp: `임시 비번: ${randomPassword}. 해당 api는 이메일 기능을 구현하지 못해서 일단 이렇게 알려드림.`,
+      message: `임시 비밀번호가 발급되었습니다. 테스트 전용: 임시 비번: ${randomPassword}.`,
     });
   } catch (err) {
     logger.error(`App - findPassword Service error\n: ${err.message}`);
