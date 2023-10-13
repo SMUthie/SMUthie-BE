@@ -24,4 +24,6 @@ module.exports = function (app) {
   app.patch('/app/user/changeName', verifyAToken, user.changeName);
 
   app.patch('/app/user/:userId', user.patchUsers);
+
+  app.delete('/app/user', verifyAToken, user.deleteUser);
 };

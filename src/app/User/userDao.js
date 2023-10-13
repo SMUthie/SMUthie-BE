@@ -93,6 +93,15 @@ async function updateUserNickname(connection, user_idx, newNickname) {
   return updateUserRow[0];
 }
 
+async function setUserStateDisable(connection, user_idx) {
+  const updateUserQuery = `
+  UPDATE User 
+  SET stat = 'D'
+  WHERE user_idx = ?;`;
+  const updateUserRow = await connection.query(updateUserQuery, user_idx);
+  return updateUserRow[0];
+}
+
 async function updateUserPassword(connection, id, password) {
   const updateUserQuery = `
   UPDATE User
@@ -135,6 +144,7 @@ module.exports = {
   selectUserAndStatByNickname,
   insertUserInfo,
   updateUserNickname,
+  setUserStateDisable,
   updateUserToken,
   updateUserPassword,
   selectRefreshTokenUseUserIdx,

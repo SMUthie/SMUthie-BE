@@ -139,6 +139,11 @@ exports.changeName = async function (req, res) {
   return res.send(editUserNickname);
 };
 
+exports.deleteUser = async function (req, res) {
+  const deleteUser = await userService.deleteUser(req.user_idx);
+  return res.send(deleteUser);
+};
+
 exports.test = function (req, res) {
   const userIdxFromJWT = req.user_idx;
   console.log(userIdxFromJWT);
