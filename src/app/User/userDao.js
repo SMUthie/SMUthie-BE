@@ -136,6 +136,19 @@ async function selectRefreshTokenUseUserIdx(connection, userIdx) {
   return userRTokenInfoRows;
 }
 
+async function selectUserPoint(connection, userIdx) {
+  const selectUserRefreshTokenQuery = `
+                SELECT user_idx, level_times
+                FROM User 
+                WHERE user_idx = ?;
+                `;
+  const [userRTokenInfoRows] = await connection.query(
+    selectUserRefreshTokenQuery,
+    userIdx
+  );
+  return userRTokenInfoRows;
+}
+
 module.exports = {
   selectUserStudentId,
   selectUserAndStatByStudentId,
@@ -148,4 +161,5 @@ module.exports = {
   updateUserToken,
   updateUserPassword,
   selectRefreshTokenUseUserIdx,
+  selectUserPoint,
 };

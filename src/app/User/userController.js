@@ -139,6 +139,13 @@ exports.changeName = async function (req, res) {
   return res.send(editUserNickname);
 };
 
+exports.getUserLevel = async function (req, res) {
+  const USER_IDX = req.user_idx;
+
+  const newAccessToken = await userProvider.getUserLevel(USER_IDX);
+  return res.send(newAccessToken);
+};
+
 exports.deleteUser = async function (req, res) {
   const deleteUser = await userService.deleteUser(req.user_idx);
   return res.send(deleteUser);

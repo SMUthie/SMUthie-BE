@@ -63,3 +63,17 @@ exports.refreshTokenWithUserIdx = async function (rToken, userIdx) {
     access_token: NEW_ACCESS_TOKEN,
   });
 };
+
+exports.getUserLevel = async function (userIdx) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const userPointQuery = await userDao.selectUserPoint(connection, userIdx);
+  connection.release();
+
+  const userPoint = userPointQuery[0].level_times;
+
+  //TODO: 마이페이지 등급 조회
+
+  return response(baseResponseStatus.SUCCESS, {
+    times: userPoint,
+  });
+};
