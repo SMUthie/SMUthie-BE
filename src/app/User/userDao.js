@@ -149,6 +149,56 @@ async function selectUserPoint(connection, userIdx) {
   return userRTokenInfoRows;
 }
 
+async function selectUserLikedReview(connection, userIdx) {
+  const selectUserLikedReviewQuery = `
+                SELECT Review.review_idx, Review.store_idx, Store.name AS store_name, Review.content, Review.likes, Review.unlikes, Review.image_url
+                FROM Review
+
+                  JOIN UserLikedReview
+                  ON Review.review_idx = UserLikedReview.review_idx
+
+                  JOIN Store
+                  ON Review.store_idx = Store.store_idx
+
+                WHERE UserLikedReview.user_idx = ?;
+                `;
+  const [userUserLikedReviewRows] = await connection.query(
+    selectUserLikedReviewQuery,
+    userIdx
+  );
+  return userUserLikedReviewRows;
+}
+
+async function selectUserWrittenReview(connection, userIdx) {
+  const selectUserWrittenReviewQuery = `
+                SELECT Review.review_idx, Review.store_idx, Store.name AS store_name, Review.content, Review.likes, Review.unlikes, Review.image_url
+                FROM Review
+                  JOIN Store
+                  ON Review.store_idx = Store.store_idx
+                WHERE Review.user_idx = ?;
+                `;
+  const [userUserWrittenReviewRows] = await connection.query(
+    selectUserWrittenReviewQuery,
+    userIdx
+  );
+  return userUserWrittenReviewRows;
+}
+
+async function selectMenusByReview(connection, review_idx) {
+  const menusByReviewQuery = `
+                SELECT Menu.menu_idx, Menu.menu_name
+                FROM Menu 
+                  JOIN  ReviewMenu
+                  ON ReviewMenu.menu_idx = Menu.menu_idx
+                WHERE ReviewMenu.review_idx = ?;
+                `;
+  const [MenusByReview] = await connection.query(
+    menusByReviewQuery,
+    review_idx
+  );
+  return MenusByReview;
+}
+
 module.exports = {
   selectUserStudentId,
   selectUserAndStatByStudentId,
@@ -162,4 +212,7 @@ module.exports = {
   updateUserPassword,
   selectRefreshTokenUseUserIdx,
   selectUserPoint,
+  selectUserLikedReview,
+  selectUserWrittenReview,
+  selectMenusByReview,
 };

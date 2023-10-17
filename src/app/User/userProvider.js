@@ -5,6 +5,7 @@ const { logger } = require('../../../config/winston');
 const { verifyRToken, signAToken } = require('../../../util/jwtUtil');
 
 const userDao = require('./userDao');
+const userUtil = require('./userUtil');
 
 // Provider: Read 비즈니스 로직 처리
 exports.studentIdCheck = async function (student_id) {
@@ -75,5 +76,67 @@ exports.getUserLevel = async function (userIdx) {
 
   return response(baseResponseStatus.SUCCESS, {
     times: userPoint,
+  });
+};
+
+exports.getUserLikedReview = async function (userIndex) {
+  const conn = await pool.getConnection(async (conn) => conn);
+  const userLikedReviews = [];
+
+  //리뷰 내용 가져오기
+  const likedReviewsContent = await userDao.selectUserLikedReview(
+    conn,
+    userIndex
+  );
+
+  for (let i = 0; i < likedReviewsContent.length; i++) {
+    const reviewContent = likedReviewsContent[i];
+
+    //해당 리뷰 메뉴 가져오기
+    const menusInReview = await userUtil.collectMenusList(conn, reviewContent);
+
+    // 반환할 리뷰글 형식 만들기
+    const reviewDetail = await userUtil.formatReviewDate(
+      reviewContent,
+      menusInReview
+    );
+
+    userLikedReviews.push(reviewDetail);
+  }
+  conn.release();
+
+  return response(baseResponseStatus.SUCCESS, {
+    reviews: userLikedReviews,
+  });
+};
+
+exports.getUserWrittenReview = async function (userIndex) {
+  const conn = await pool.getConnection(async (conn) => conn);
+  const userWrittenReviews = [];
+
+  //리뷰 내용 가져오기
+  const writtenReviewsContent = await userDao.selectUserWrittenReview(
+    conn,
+    userIndex
+  );
+
+  for (let i = 0; i < writtenReviewsContent.length; i++) {
+    const reviewContent = writtenReviewsContent[i];
+
+    //해당 리뷰 메뉴 가져오기
+    const menusInReview = await userUtil.collectMenusList(conn, reviewContent);
+
+    // 반환할 리뷰글 형식 만들기
+    const reviewDetail = await userUtil.formatReviewDate(
+      reviewContent,
+      menusInReview
+    );
+
+    userWrittenReviews.push(reviewDetail);
+  }
+  conn.release();
+
+  return response(baseResponseStatus.SUCCESS, {
+    reviews: userWrittenReviews,
   });
 };

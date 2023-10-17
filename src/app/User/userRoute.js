@@ -25,6 +25,17 @@ module.exports = function (app) {
 
   app.patch('/app/user/changeName', verifyAToken, user.changeName);
 
+  app.get('/app/user/likedReview', verifyAToken, user.getUserLikedReview);
+
+  app.get('/app/user/writtenReview', verifyAToken, user.getUserWrittenReview);
+
+  //TODO: 필요 여부 미정
+  // app.get('/app/user/likedReport', verifyAToken, user.getUserLikedReport);
+
+  // app.get('/app/user/likedMenu', verifyAToken, user.getUserLikedMenu);
+
+  // app.get('/app/user/writtenReport', verifyAToken, user.getUserWrittenReport);
+
   app.patch('/app/user/:userId', user.patchUsers);
 
   app.delete('/app/user', verifyAToken, user.deleteUser);

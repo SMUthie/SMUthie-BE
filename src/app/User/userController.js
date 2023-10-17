@@ -151,6 +151,42 @@ exports.deleteUser = async function (req, res) {
   return res.send(deleteUser);
 };
 
+exports.getUserLikedReview = async function (req, res) {
+  const USER_IDX = req.user_idx;
+
+  const userLikedReview = await userProvider.getUserLikedReview(USER_IDX);
+  return res.send(userLikedReview);
+};
+
+exports.getUserWrittenReview = async function (req, res) {
+  const USER_IDX = req.user_idx;
+
+  const userWrittenReview = await userProvider.getUserWrittenReview(USER_IDX);
+  return res.send(userWrittenReview);
+};
+
+//TODO: 필요 여부 미정
+// exports.getUserLikedMenu = async function (req, res) {
+//   const USER_IDX = req.user_idx;
+
+//   const userLikedMenu = await userProvider.getUserLikedMenu(USER_IDX);
+//   return res.send(userLikedMenu);
+// };
+
+// exports.getUserLikedReport = async function (req, res) {
+//   const USER_IDX = req.user_idx;
+
+//   const userLikedReport = await userProvider.getUserLikedReport(USER_IDX);
+//   return res.send(userLikedReport);
+// };
+
+// exports.getUserWrittenReport = async function (req, res) {
+//   const USER_IDX = req.user_idx;
+
+//   const userWrittenReport = await userProvider.getUserWrittenReport(USER_IDX);
+//   return res.send(userWrittenReport);
+// };
+
 exports.test = function (req, res) {
   const userIdxFromJWT = req.user_idx;
   console.log(userIdxFromJWT);
