@@ -54,6 +54,19 @@ async function selectUserAndStatByNickname(connection, nickname) {
   return studentIdRows;
 }
 
+async function countNickname(connection, nickname) {
+  const countNicknameQuery = `
+  SELECT COUNT(User.nickname) AS number
+  FROM User
+  WHERE User.nickname = BINARY(?)`;
+
+  const [countNicknameNumber] = await connection.query(
+    countNicknameQuery,
+    nickname
+  );
+  return countNicknameNumber[0].number;
+}
+
 async function selectLoginUserStudentId(connection, student_id) {
   const selectLoginUserStudentIdQuery = `
                  SELECT user_idx, pw, stat, token
@@ -205,6 +218,7 @@ module.exports = {
   selectUserAndStatByUserIdx,
   selectLoginUserStudentId,
   selectUserAndStatByNickname,
+  countNickname,
   insertUserInfo,
   updateUserNickname,
   setUserStateDisable,

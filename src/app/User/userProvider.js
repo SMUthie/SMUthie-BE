@@ -19,6 +19,16 @@ exports.studentIdCheck = async function (student_id) {
   return StudentIdCheckResult;
 };
 
+exports.checkNicknameExist = async function (new_nickname) {
+  const conn = await pool.getConnection(async (conn) => conn);
+  const nicknameNumber = await userDao.countNickname(conn, new_nickname);
+  if (nicknameNumber === 0) {
+    return response(baseResponseStatus.SUCCESS);
+  } else {
+    return errResponse(baseResponseStatus.SIGNUP_REDUNDANT_NICKNAME);
+  }
+};
+
 exports.userStatCheckBySchoolId = async function (student_id) {
   const connection = await pool.getConnection(async (conn) => conn);
   const studentIdCheckResult = await userDao.selectUserAndStatByStudentId(

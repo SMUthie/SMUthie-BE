@@ -8,6 +8,9 @@ module.exports = function (app) {
   // 0. 테스트 API
   // app.get('/app/test', user.getTest)
 
+  // 유저 닉네임 중복체크 API
+  app.get('/app/user/checkNickname', user.checkNicknameExist);
+
   // 1. 유저 생성 (회원가입) API
   app.post('/app/user/register', user.postUsers);
 

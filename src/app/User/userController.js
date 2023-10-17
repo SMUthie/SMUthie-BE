@@ -121,6 +121,17 @@ exports.findPassword = async function (req, res) {
   return res.send(result);
 };
 
+exports.checkNicknameExist = async function (req, res) {
+  const CHECK_NICKNAME = req.query.nickname;
+  if (!CHECK_NICKNAME)
+    return res.send(errResponse(baseResponse.USER_NICKNAME_EMPTY));
+
+  const checkUserNickname = await userProvider.checkNicknameExist(
+    CHECK_NICKNAME
+  );
+  return res.send(checkUserNickname);
+};
+
 /**
  * API No. ?
  * API Name : 회원 정보 수정 API + JWT
