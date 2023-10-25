@@ -183,6 +183,18 @@ exports.editUserNickname = async function (userIdx, newNickname) {
   }
 };
 
+exports.deleteUser = async function (userIdx) {
+  try {
+    var connection = await pool.getConnection(async (conn) => conn);
+    await userDao.setUserStateDisable(connection, userIdx);
+    connection.release();
+    return response(baseResponse.SUCCESS);
+  } catch (err) {
+    logger.error(`App - deleteUser Service error\n: ${err.message}`);
+    return errResponse(baseResponse.DB_ERROR);
+  }
+};
+
 exports.editUser = async function (id, nickname) {
   try {
     console.log(id);

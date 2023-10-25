@@ -121,6 +121,17 @@ exports.findPassword = async function (req, res) {
   return res.send(result);
 };
 
+exports.checkNicknameExist = async function (req, res) {
+  const CHECK_NICKNAME = req.query.nickname;
+  if (!CHECK_NICKNAME)
+    return res.send(errResponse(baseResponse.USER_NICKNAME_EMPTY));
+
+  const checkUserNickname = await userProvider.checkNicknameExist(
+    CHECK_NICKNAME
+  );
+  return res.send(checkUserNickname);
+};
+
 /**
  * API No. ?
  * API Name : 회원 정보 수정 API + JWT
@@ -138,6 +149,54 @@ exports.changeName = async function (req, res) {
   );
   return res.send(editUserNickname);
 };
+
+exports.getUserLevel = async function (req, res) {
+  const USER_IDX = req.user_idx;
+
+  const newAccessToken = await userProvider.getUserLevel(USER_IDX);
+  return res.send(newAccessToken);
+};
+
+exports.deleteUser = async function (req, res) {
+  const deleteUser = await userService.deleteUser(req.user_idx);
+  return res.send(deleteUser);
+};
+
+exports.getUserLikedReview = async function (req, res) {
+  const USER_IDX = req.user_idx;
+
+  const userLikedReview = await userProvider.getUserLikedReview(USER_IDX);
+  return res.send(userLikedReview);
+};
+
+exports.getUserWrittenReview = async function (req, res) {
+  const USER_IDX = req.user_idx;
+
+  const userWrittenReview = await userProvider.getUserWrittenReview(USER_IDX);
+  return res.send(userWrittenReview);
+};
+
+//TODO: 필요 여부 미정
+// exports.getUserLikedMenu = async function (req, res) {
+//   const USER_IDX = req.user_idx;
+
+//   const userLikedMenu = await userProvider.getUserLikedMenu(USER_IDX);
+//   return res.send(userLikedMenu);
+// };
+
+// exports.getUserLikedReport = async function (req, res) {
+//   const USER_IDX = req.user_idx;
+
+//   const userLikedReport = await userProvider.getUserLikedReport(USER_IDX);
+//   return res.send(userLikedReport);
+// };
+
+// exports.getUserWrittenReport = async function (req, res) {
+//   const USER_IDX = req.user_idx;
+
+//   const userWrittenReport = await userProvider.getUserWrittenReport(USER_IDX);
+//   return res.send(userWrittenReport);
+// };
 
 exports.test = function (req, res) {
   const userIdxFromJWT = req.user_idx;
