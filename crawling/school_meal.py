@@ -58,38 +58,56 @@ def makeUrlList():
         crawlingUrlList[i.value] = f'https://www.smu.ac.kr/kor/life/restaurantView.do?mode=menuList&srMealCategory={i.value}&srDt={today}'
     return crawlingUrlList
     
-def getTableHtml(url):
+def getAllRowHtml(url):
     page = requests.get(url)
     soup = bs(page.content, "html.parser")
-    mealTableHtml = soup.find('table', class_="smu-table tb-w150")
-    mealsClass = mealTableHtml.find_all("ul", class_="s-dot")
+    mealTableHtml = soup.find('table', class_="smu-table tb-w150").find("tbody")
+    mealsClass = mealTableHtml.find_all("tr")
     return mealsClass
 
-def getMealTextListFromHtml(mealsClassHtml):
-    allMealTextList = []
-    for nowMeal in mealsClassHtml:
-        allMealTextList.append(nowMeal.text)
-    return allMealTextList
+def getOneRowMeal(oneRowHtml):
+    mealNameHtml = oneRowHtml.find("th")
+    mealName = mealNameHtml.text.replace(" ", "").replace("\n", "").replace("\t", "")
+    
+    mealDescHtmlList = oneRowHtml.find_all("ul")
+    allMealDesc = getOneRowAllDesc(mealDescHtmlList)
+    
+    return {
+        "mealName": mealName,
+        "mealDescriptionList": allMealDesc
+    }
 
-def getMealTextList(url):
-    mealTableHtml = getTableHtml(url)
-    return getMealTextListFromHtml(mealTableHtml)
+def getOneRowAllDesc(oneRowMealDescList):
+    allMealDescTextList = []
+    for mealDesc in oneRowMealDescList:
+        allMealDescTextList.append(mealDesc.text.strip("\n\t "))
+    return allMealDescTextList
 
+def getUrlMealInfoList(url):
+    allMealDict = []
+    mealTableHtml = getAllRowHtml(url)
+    for oneRowHtml in mealTableHtml:
+        oneMealDetail = getOneRowMeal(oneRowHtml)
+        allMealDict.append(oneMealDetail)
+    return allMealDict
+        
 def getSchoolMeal():
     try: 
         result = []
         weeklyDate = getWeeklyDateIncludedToday()
         crawlingUrls = makeUrlList()
-        for mealType, url in crawlingUrls.items():
-            mealTextList = getMealTextList(url)
-            for i in range(5):
-                result.append({
-                    "date": weeklyDate[i],
-                    "weekday": i+1,
-                    "mealType": mealType,
-                    "content": mealTextList[i]
-                })
-        
+        for mealTime, url in crawlingUrls.items():
+            allRowMealDictList = getUrlMealInfoList(url)
+            for nowRowIndex in range(len(allRowMealDictList)):
+                for nowWeeklyNumber in range(len(allRowMealDictList[nowRowIndex]["mealDescriptionList"])):
+                    result.append({
+                            "date": weeklyDate[nowWeeklyNumber],
+                            "weekday": nowWeeklyNumber+1,
+                            "mealTimeType": mealTime,
+                            "mealName": allRowMealDictList[nowRowIndex]["mealName"],
+                            "mealDescription": allRowMealDictList[nowRowIndex]["mealDescriptionList"][nowWeeklyNumber]
+                        })
+                    
         # client = MongoClient("mongodb://admin:capstone@localhost:27017/")
         client = MongoClient("mongodb://localhost:27017/")
         mealDB = client["school_meal"]
@@ -99,7 +117,6 @@ def getSchoolMeal():
         for i in result:
             mealTable.insert_one(i)
     except Exception as e:
-        raise(e)
         print("Crawling Failed. Time:", str(datetime.now(pytz.timezone('Asia/Seoul'))))
         
     print("Crawling Done. Time:", str(datetime.now(pytz.timezone('Asia/Seoul'))))
