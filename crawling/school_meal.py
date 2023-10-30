@@ -120,11 +120,9 @@ def getSchoolMeal():
         
     print("Crawling Done. Time:", str(datetime.now(pytz.timezone('Asia/Seoul'))))
     
-getSchoolMeal()
-
-# if __name__ == "__main__":
-#     getSchoolMeal()
-#     schedule.every().day.do(getSchoolMeal)
-#     while True:
-#             schedule.run_pending()
-#             time.sleep(1)
+if __name__ == "__main__":
+    getSchoolMeal()
+    schedule.every(1).days.do(getSchoolMeal)
+    while True:
+            schedule.run_pending()
+            time.sleep(1)
