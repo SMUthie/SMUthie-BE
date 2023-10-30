@@ -108,8 +108,7 @@ def getSchoolMeal():
                             "mealDescription": allRowMealDictList[nowRowIndex]["mealDescriptionList"][nowWeeklyNumber]
                         })
                     
-        # client = MongoClient("mongodb://admin:capstone@localhost:27017/")
-        client = MongoClient("mongodb://localhost:27017/")
+        client = MongoClient("mongodb://admin:capstone@localhost:27017/")
         mealDB = client["school_meal"]
         mealTable = mealDB["seoul_new_7"]
         
