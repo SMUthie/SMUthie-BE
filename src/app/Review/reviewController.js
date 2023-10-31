@@ -63,3 +63,44 @@ exports.getReview = async function (req, res) {
 
   return res.send(response(baseResponse.SUCCESS, reviewResult));
 };
+
+/**
+ * API No. 4
+ * API Name : 가게의 리뷰글 수정 API
+ * [PATCH] /app/board/review/:reviewIdx
+ */
+exports.patchReview = async function (req, res) {
+  /*
+    * Body : content
+  */
+  const reviewIdx = req.params.reviewIdx;
+  const content = req.body.content;
+
+  // TODO: JWT user 검증
+
+  //빈 값 체크
+  if (!content)
+    return res.send("내용 미입력");
+
+  const reviewResponse = await reviewService.updateReview(
+    content,
+    reviewIdx,
+  );
+
+  return res.send(reviewResponse);
+};
+
+/**
+ * API No. 5
+ * API Name : 가게의 리뷰글 삭제 API
+ * [DELETE] /app/board/review/:reviewIdx
+ */
+exports.deleteReview = async function (req, res) {
+  const reviewIdx = req.params.reviewIdx;
+
+  // TODO: JWT user 검증
+
+  const reviewResponse = await reviewService.deleteReview(reviewIdx);
+
+  return res.send(reviewResponse);
+};

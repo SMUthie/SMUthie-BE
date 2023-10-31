@@ -57,10 +57,40 @@ async function selectReview(connection, reviewIdx) {
   return review;
 }
 
+// 4. 가게의 리뷰글 수정 (Update)
+async function updateReview(connection, content, reviewIdx) {
+  const updateReviewParams = [content, reviewIdx];
+  const updateReviewQuery = `
+    UPDATE SMUthie.Review
+    SET content = ?
+    WHERE review_idx = ?;
+  `;
+
+  const [updateReviewRow] = await connection.query(updateReviewQuery, updateReviewParams);
+  
+  console.log(updateReviewParams);
+
+  return updateReviewRow;
+}
+
+// 5. 가게의 리뷰글 삭제 (Delete)
+async function deleteReview(connection, reviewIdx) {
+  const deleteReviewQuery = `
+    DELETE FROM SMUthie.Review
+    WHERE review_idx = ?;
+  `;
+
+  const [deleteReviewRow] = await connection.query(deleteReviewQuery, reviewIdx);
+
+  return deleteReviewRow;
+}
+
 
 module.exports = {
   selectReviewList,
   insertReview,
   insertReviewMenu,
   selectReview,
+  updateReview,
+  deleteReview
 };
