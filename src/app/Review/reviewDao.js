@@ -85,6 +85,23 @@ async function deleteReview(connection, reviewIdx) {
   return deleteReviewRow;
 }
 
+// review 작성자 찾기 
+async function selectReviewWriter(connection, reviewIdx) {
+  const selectReviewWriterQuery = `
+    SELECT user_idx
+    FROM SMUthie.Review
+    WHERE review_idx = ?;
+  `;
+
+  const [writerRow] = await connection.query(selectReviewWriterQuery, reviewIdx);
+
+  if (writerRow.length > 0) {
+    const userIdx = writerRow[0].user_idx;
+    return userIdx;
+  }
+
+  return null; // 작성자가 없을 경우 null 반환
+}
 
 module.exports = {
   selectReviewList,
@@ -92,5 +109,6 @@ module.exports = {
   insertReviewMenu,
   selectReview,
   updateReview,
-  deleteReview
+  deleteReview,
+  selectReviewWriter
 };

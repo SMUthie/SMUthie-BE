@@ -41,9 +41,15 @@ exports.createReview = async function(storeIdx, userIdx, content, imageUrl, menu
 }
 
 // 가게 리뷰글 수정 
-exports.updateReview = async function(content, reviewIdx) {
+exports.updateReview = async function(content, reviewIdx, USER_IDX) {
   try {
     const connection = await pool.getConnection(async (conn) => conn);
+    const userIdx = await reviewDao.selectReviewWriter(connection, reviewIdx);
+
+    console.log(USER_IDX, userIdx);
+
+    if (USER_IDX != userIdx) 
+      return errResponse(baseResponse.USER_NOT_MATCH);
     
     await reviewDao.updateReview(connection, content, reviewIdx)
     
@@ -56,9 +62,13 @@ exports.updateReview = async function(content, reviewIdx) {
 }
 
 // 가게 리뷰글 삭제
-exports.deleteReview = async function(reviewIdx) {
+exports.deleteReview = async function(reviewIdx, USER_IDX) {
   try {
     const connection = await pool.getConnection(async (conn) => conn);
+    const userIdx = await reviewDao.selectReviewWriter(connection, reviewIdx);
+
+    if (USER_IDX != userIdx) 
+    return errResponse(baseResponse.USER_NOT_MATCH);
     
     await reviewDao.deleteReview(connection, reviewIdx)
     
