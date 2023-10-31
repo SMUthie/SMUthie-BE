@@ -191,6 +191,12 @@ module.exports = {
     message: '탈퇴된 계정입니다. 고객센터에 문의해주세요.',
   },
 
+  USER_NOT_MATCH: {
+    isSuccess: false,
+    code: 3007,
+    message: '작성자만 사용할 수 있습니다.',
+  },
+
   //Connection, Transaction 등의 서버 오류
   DB_ERROR: { isSuccess: false, code: 4000, message: '데이터 베이스 에러' },
   SERVER_ERROR: { isSuccess: false, code: 4001, message: '서버 에러' },

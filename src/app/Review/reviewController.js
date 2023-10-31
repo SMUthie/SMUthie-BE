@@ -1,4 +1,5 @@
 const jwtMiddleware = require("../../../config/jwtVerify");
+const reviewDao = require("../Review/reviewDao");
 const reviewProvider = require("../Review/reviewProvider");
 const reviewService = require("../Review/reviewService");
 const baseResponse = require("../../../config/baseResponseStatus");
@@ -26,14 +27,16 @@ exports.postReview = async function (req, res) {
     * Body : userIdx, content, imageUrlList, menutag
   */
   const storeIdx = req.params.storeIdx;
-  const { userIdx, content, imageUrlList, menuTag } = req.body;
+  const { content, imageUrlList, menuTag } = req.body;
 
   console.log('입력한 해시태그::', menuTag)
+
   // TODO: JWT user 검증
+  const USER_IDX = req.user_idx;
 
   //빈 값 체크
-  if (!userIdx)
-    return res.send("유저 미입력");
+  if (!USER_IDX)
+    return res.send("토큰 미입력");
   if (!content)
     return res.send("내용 미입력");
   if (!imageUrlList || !imageUrlList.length)
@@ -43,7 +46,7 @@ exports.postReview = async function (req, res) {
 
   const reviewResponse = await reviewService.createReview(
     storeIdx,
-    userIdx,
+    USER_IDX,
     content,
     imageUrlList,
     menuTag
@@ -76,7 +79,8 @@ exports.patchReview = async function (req, res) {
   const reviewIdx = req.params.reviewIdx;
   const content = req.body.content;
 
-  // TODO: JWT user 검증
+  // JWT user 검증
+  const USER_IDX = req.user_idx;
 
   //빈 값 체크
   if (!content)
@@ -85,6 +89,7 @@ exports.patchReview = async function (req, res) {
   const reviewResponse = await reviewService.updateReview(
     content,
     reviewIdx,
+    USER_IDX
   );
 
   return res.send(reviewResponse);
@@ -98,9 +103,10 @@ exports.patchReview = async function (req, res) {
 exports.deleteReview = async function (req, res) {
   const reviewIdx = req.params.reviewIdx;
 
-  // TODO: JWT user 검증
+  // JWT user 검증
+  const USER_IDX = req.user_idx;
 
-  const reviewResponse = await reviewService.deleteReview(reviewIdx);
+  const reviewResponse = await reviewService.deleteReview(reviewIdx, USER_IDX);
 
   return res.send(reviewResponse);
 };
