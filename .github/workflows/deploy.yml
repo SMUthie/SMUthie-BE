@@ -44,6 +44,7 @@ jobs:
           echo JWT_REFRESH_TOKEN_EXPIRESIN=${{ secrets.JWT_REFRESH_TOKEN_EXPIRESIN }} >> .env
           echo PASSWORD_HASH=${{ secrets.PASSWORD_HASH }} >> .env
           echo PASSWORD_DIGEST=${{ secrets.PASSWORD_DIGEST }} >> .env
+          echo MONGODB_IP=${{ secrets.MONGODB_IP }} >> .env
           cat .env
 
       - name: dependency #필요한 dependency들을 설치하고 빌드
