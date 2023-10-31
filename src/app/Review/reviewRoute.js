@@ -10,4 +10,6 @@ module.exports = function(app){
     // 3. 리뷰글 상세 조회 API
     app.get('/app/board/review/detail/:reviewIdx', review.getReview); 
 
+    // 4. 리뷰글 수정 API
+    app.patch('/app/board/review/:reviewIdx', review.patchReview); 
 };

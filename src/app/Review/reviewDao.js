@@ -57,10 +57,26 @@ async function selectReview(connection, reviewIdx) {
   return review;
 }
 
+// 4. 가게의 리뷰글 수정 (Update)
+async function updateReview(connection, content, reviewIdx) {
+  const updateReviewParams = [content, reviewIdx];
+  const updateReviewQuery = `
+    UPDATE SMUthie.Review
+    SET content = ?
+    WHERE review_idx = ?;
+  `;
+
+  const [updateReviewRow] = await connection.query(updateReviewQuery, updateReviewParams);
+  
+  console.log(updateReviewParams);
+
+  return updateReviewRow;
+}
 
 module.exports = {
   selectReviewList,
   insertReview,
   insertReviewMenu,
   selectReview,
+  updateReview
 };
