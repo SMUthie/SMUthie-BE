@@ -12,4 +12,7 @@ module.exports = function(app){
 
     // 4. 리뷰글 수정 API
     app.patch('/app/board/review/:reviewIdx', review.patchReview); 
+
+    // 5. 리뷰글 수정 API
+    app.delete('/app/board/review/:reviewIdx', review.deleteReview); 
 };

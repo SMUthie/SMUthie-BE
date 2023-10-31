@@ -66,7 +66,7 @@ exports.getReview = async function (req, res) {
 
 /**
  * API No. 4
- * API Name : 가게의 리뷰글 전체 조회 API
+ * API Name : 가게의 리뷰글 수정 API
  * [PATCH] /app/board/review/:reviewIdx
  */
 exports.patchReview = async function (req, res) {
@@ -86,6 +86,21 @@ exports.patchReview = async function (req, res) {
     content,
     reviewIdx,
   );
+
+  return res.send(reviewResponse);
+};
+
+/**
+ * API No. 5
+ * API Name : 가게의 리뷰글 삭제 API
+ * [DELETE] /app/board/review/:reviewIdx
+ */
+exports.deleteReview = async function (req, res) {
+  const reviewIdx = req.params.reviewIdx;
+
+  // TODO: JWT user 검증
+
+  const reviewResponse = await reviewService.deleteReview(reviewIdx);
 
   return res.send(reviewResponse);
 };

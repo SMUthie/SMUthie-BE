@@ -54,3 +54,18 @@ exports.updateReview = async function(content, reviewIdx) {
     return errResponse(baseResponse.DB_ERROR); 
   }
 }
+
+// 가게 리뷰글 삭제
+exports.deleteReview = async function(reviewIdx) {
+  try {
+    const connection = await pool.getConnection(async (conn) => conn);
+    
+    await reviewDao.deleteReview(connection, reviewIdx)
+    
+    connection.release();
+    return response(baseResponse.SUCCESS);
+  } catch (err) {
+    logger.error(`[ERROR] ${err.message}`);   
+    return errResponse(baseResponse.DB_ERROR); 
+  }
+}

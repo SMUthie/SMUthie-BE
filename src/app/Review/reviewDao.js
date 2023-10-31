@@ -73,10 +73,24 @@ async function updateReview(connection, content, reviewIdx) {
   return updateReviewRow;
 }
 
+// 5. 가게의 리뷰글 삭제 (Delete)
+async function deleteReview(connection, reviewIdx) {
+  const deleteReviewQuery = `
+    DELETE FROM SMUthie.Review
+    WHERE review_idx = ?;
+  `;
+
+  const [deleteReviewRow] = await connection.query(deleteReviewQuery, reviewIdx);
+
+  return deleteReviewRow;
+}
+
+
 module.exports = {
   selectReviewList,
   insertReview,
   insertReviewMenu,
   selectReview,
-  updateReview
+  updateReview,
+  deleteReview
 };
