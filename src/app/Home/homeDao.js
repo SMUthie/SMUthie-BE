@@ -1,3 +1,5 @@
+const { getSchoolMeal } = require('../../../crawling/mealDb');
+
 // 교내 카페 정보 조회
 async function selectSchoolCafe(connection) {
   const selectSchoolCafeQuery = `
@@ -21,8 +23,12 @@ async function selectAndamiro(connection) {
   return menuRows;
 }
 
+async function selectWeeklyMeal() {
+  return await getSchoolMeal();
+}
+
 module.exports = {
   selectSchoolCafe,
   selectAndamiro,
-
+  selectWeeklyMeal,
 };

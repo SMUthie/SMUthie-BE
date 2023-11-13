@@ -21,3 +21,8 @@ exports.getAndamiro = async function (req, res) {
   const menuListResult = await homeProvider.retrieveAndamiro();
   return res.send(response(baseResponse.SUCCESS, menuListResult));
 };
+
+exports.getSchoolMeal = async function (req, res) {
+  const mealListResult = await homeProvider.retrieveSchoolMeal();
+  return res.send(response(baseResponse.SUCCESS, mealListResult));
+};
