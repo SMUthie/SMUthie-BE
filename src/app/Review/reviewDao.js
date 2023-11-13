@@ -103,6 +103,42 @@ async function selectReviewWriter(connection, reviewIdx) {
   return null; // 작성자가 없을 경우 null 반환
 }
 
+// 내가 좋아요 눌렀는지 확인
+async function selectIsLiked(connection, reviewIdx, userIdx) {
+  const selectIsLikedQuery = `
+    SELECT user_idx, review_idx
+    FROM SMUthie.UserLikedReview
+    WHERE review_idx = ? 
+      AND user_idx = ?;
+  `;
+
+  const [likeRow] = await connection.query(selectIsLikedQuery, [reviewIdx, userIdx]);
+
+  if (likeRow.length > 0) {
+    return true;
+  }
+
+  return false; // 좋아요를 하지 않았을 경우 false 반환
+}
+
+// 내가 좋아요 눌렀는지 확인
+async function selectIsUnliked(connection, reviewIdx, userIdx) {
+  const selectIsUnlikedQuery = `
+    SELECT user_idx, review_idx
+    FROM SMUthie.UserUnlikedReview
+    WHERE review_idx = ? 
+      AND user_idx = ?;
+  `;
+
+  const [unlikeRow] = await connection.query(selectIsUnlikedQuery, [reviewIdx, userIdx]);
+
+  if (unlikeRow.length > 0) {
+    return true;
+  }
+
+  return false; // 좋아요를 하지 않았을 경우 false 반환
+}
+
 module.exports = {
   selectReviewList,
   insertReview,
@@ -110,5 +146,7 @@ module.exports = {
   selectReview,
   updateReview,
   deleteReview,
-  selectReviewWriter
+  selectReviewWriter,
+  selectIsLiked,
+  selectIsUnliked
 };
