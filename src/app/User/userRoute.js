@@ -11,8 +11,7 @@ module.exports = function (app) {
   // 유저 닉네임 중복체크 API
   app.get('/app/user/checkNickname', user.checkNicknameExist);
 
-  // 유저 학번 중복체크 API
-  app.get('/app/user/checkSchoolId', user.checkSchoolIdExist);
+  app.get('/app/user/sendEmail', user.sendEmail);
 
   // 1. 유저 생성 (회원가입) API
   app.post('/app/user/register', user.postUsers);

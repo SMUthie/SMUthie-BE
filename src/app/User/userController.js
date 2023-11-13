@@ -132,13 +132,12 @@ exports.checkNicknameExist = async function (req, res) {
   return res.send(checkUserNickname);
 };
 
-exports.checkSchoolIdExist = async function (req, res) {
-  const CHECK_SCHOOL_ID = req.query.schoolId;
-  if (!CHECK_SCHOOL_ID)
-    return res.send(errResponse(baseResponse.SCHOOL_ID_EMPTY));
+exports.sendEmail = async function (req, res) {
+  const SCHOOL_ID = req.query.schoolId;
+  if (!SCHOOL_ID) return res.send(errResponse(baseResponse.SCHOOL_ID_EMPTY));
 
-  const checkSchoolId = await userProvider.checkSchoolIdExist(CHECK_SCHOOL_ID);
-  return res.send(checkSchoolId);
+  const sendEmailResult = await userProvider.sendEmail(SCHOOL_ID);
+  return res.send(sendEmailResult);
 };
 
 /**
