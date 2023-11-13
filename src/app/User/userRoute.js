@@ -15,6 +15,8 @@ module.exports = function (app) {
 
   app.get('/auth/auth_email', user.authEmail);
 
+  app.get('/app/user/checkAuthStatus', user.checkAuthStatus);
+
   // 1. 유저 생성 (회원가입) API
   app.post('/app/user/register', user.postUsers);
 

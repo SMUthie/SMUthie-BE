@@ -189,7 +189,8 @@ module.exports = {
   SIGNIN_INACTIVE_ACCOUNT: {
     isSuccess: false,
     code: 3005,
-    message: '비활성화 된 계정입니다. 고객센터에 문의해주세요.',
+    message:
+      '인증이 통과되지 않는 계정입니다. 학교 이메일 인증을 진행해주세요.',
   },
   SIGNIN_WITHDRAWAL_ACCOUNT: {
     isSuccess: false,

@@ -154,6 +154,14 @@ exports.authEmail = async function (req, res) {
   return res.send(authEmail);
 };
 
+exports.checkAuthStatus = async function (req, res) {
+  const SCHOOL_ID = req.query.schoolId;
+  if (!SCHOOL_ID) return res.send(errResponse(baseResponse.SCHOOL_ID_EMPTY));
+
+  const authStatus = await userProvider.checkAuthStatus(SCHOOL_ID);
+  return res.send(authStatus);
+};
+
 /**
  * API No. ?
  * API Name : 회원 정보 수정 API + JWT

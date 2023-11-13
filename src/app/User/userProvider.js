@@ -118,6 +118,17 @@ exports.authEmail = async function (code) {
   }
 };
 
+exports.checkAuthStatus = async function (schoolId) {
+  const authCode = await getEmailAuthCode(schoolId);
+  if (!authCode) {
+    return errResponse(baseResponseStatus.SIGNIN_INACTIVE_ACCOUNT);
+  }
+  if (authCode == 'finish') {
+    return response(baseResponseStatus.SUCCESS);
+  }
+  return errResponse(baseResponseStatus.SIGNIN_INACTIVE_ACCOUNT);
+};
+
 exports.userStatCheckBySchoolId = async function (student_id) {
   const connection = await pool.getConnection(async (conn) => conn);
   const studentIdCheckResult = await userDao.selectUserAndStatByStudentId(
