@@ -21,3 +21,13 @@ exports.getRestaurants = async function (req, res) {
   const restaurantListResult = await mapProvider.retrieveRestaurants();
   return res.send(response(baseResponse.SUCCESS, restaurantListResult));
 };
+
+/**
+ * API No. 3
+ * API Name : 지도 음식점 목록 조회 API
+ * [GET] /app/map/cafe
+ */
+exports.getCafes = async function (req, res) {
+  const cafeListResult = await mapProvider.retrieveCafes();
+  return res.send(response(baseResponse.SUCCESS, cafeListResult));
+};

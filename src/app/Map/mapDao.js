@@ -24,7 +24,19 @@ async function selectRestaurants(connection) {
   return restaurantRows;
 }
 
+// 지도 카페 조회 
+async function selectCafes(connection) {
+  const selectCafesQuery = `
+                SELECT store_idx, latitude, longitude, name, telephone, time, mark_image
+                FROM SMUthie.Store
+                WHERE category = "C";
+                `;
+  const [cafeRows] = await connection.query(selectCafesQuery);
+  return cafeRows;
+}
+
 module.exports = {
   selectStores,
   selectRestaurants,
+  selectCafes,
 };

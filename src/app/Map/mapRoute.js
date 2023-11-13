@@ -7,4 +7,6 @@ module.exports = function(app){
     // 2. 지도 음식점 목록 조회 API
     app.get('/app/map/restaurant', map.getRestaurants); 
 
+    // 3. 지도 카페 목록 조회 API
+    app.get('/app/map/cafe', map.getCafes); 
 };
