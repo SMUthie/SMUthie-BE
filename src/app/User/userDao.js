@@ -67,6 +67,19 @@ async function countNickname(connection, nickname) {
   return countNicknameNumber[0].number;
 }
 
+async function countSchoolId(connection, schoolId) {
+  const countSchoolIdQuery = `
+  SELECT COUNT(User.student_id) AS number
+  FROM User
+  WHERE User.student_id = BINARY(?)`;
+
+  const [countSchoolIdNumber] = await connection.query(
+    countSchoolIdQuery,
+    schoolId
+  );
+  return countSchoolIdNumber[0].number;
+}
+
 async function selectLoginUserStudentId(connection, student_id) {
   const selectLoginUserStudentIdQuery = `
                  SELECT user_idx, pw, stat, token
@@ -219,6 +232,7 @@ module.exports = {
   selectLoginUserStudentId,
   selectUserAndStatByNickname,
   countNickname,
+  countSchoolId,
   insertUserInfo,
   updateUserNickname,
   setUserStateDisable,

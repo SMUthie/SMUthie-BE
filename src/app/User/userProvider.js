@@ -29,6 +29,16 @@ exports.checkNicknameExist = async function (new_nickname) {
   }
 };
 
+exports.checkSchoolIdExist = async function (new_school_id) {
+  const conn = await pool.getConnection(async (conn) => conn);
+  const schoolId = await userDao.countSchoolId(conn, new_school_id);
+  if (schoolId === 0) {
+    return response(baseResponseStatus.SUCCESS);
+  } else {
+    return errResponse(baseResponseStatus.SIGNUP_REDUNDANT_STUDENT_ID);
+  }
+};
+
 exports.userStatCheckBySchoolId = async function (student_id) {
   const connection = await pool.getConnection(async (conn) => conn);
   const studentIdCheckResult = await userDao.selectUserAndStatByStudentId(
