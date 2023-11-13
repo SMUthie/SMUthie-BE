@@ -1,7 +1,7 @@
 // 1. 가게의 리뷰글 전체 조회 
 async function selectReviewList(connection, storeIdx) {
   const selectReviewListQuery = `
-    SELECT Review.review_idx, Review.store_idx, Review.content, Review.likes, Review.unlikes, ReviewMenu.menu_idx, menu_name
+    SELECT Review.review_idx, Review.store_idx, Review.content, Review.likes, Review.unlikes, ReviewMenu.menu_idx, menu_name, created_at
     FROM SMUthie.Review, SMUthie.ReviewMenu, SMUthie.Menu
     WHERE Review.store_idx = ?
       AND ReviewMenu.review_idx = Review.review_idx
@@ -45,7 +45,7 @@ async function insertReviewMenu(connection, menuName) {
 // 3. 리뷰글 상세 조회 
 async function selectReview(connection, reviewIdx) {
   const selectReviewQuery = `
-    SELECT Review.review_idx, User.user_idx, nickname, ReviewMenu.menu_idx, menu_name, Review.store_idx, Store.name, content, Review.likes, Review.unlikes, Review.image_url -- level_times, created_at
+    SELECT Review.review_idx, User.user_idx, nickname, ReviewMenu.menu_idx, menu_name, Review.store_idx, Store.name, content, Review.likes, Review.unlikes, Review.image_url, Review.created_at
     FROM SMUthie.Review, SMUthie.User, SMUthie.ReviewMenu, SMUthie.Menu, SMUthie.Store
     WHERE Review.review_idx = ?
       AND Review.user_idx = User.user_idx
