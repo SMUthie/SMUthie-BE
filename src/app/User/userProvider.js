@@ -62,8 +62,7 @@ const checkSchoolIdExist = async function (new_school_id) {
   const conn = await pool.getConnection(async (conn) => conn);
   const schoolId = await userDao.countSchoolId(conn, new_school_id);
   conn.release();
-  const tempSchoolId = await getEmailAuthCode(new_school_id);
-  if (schoolId > 0 || tempSchoolId) {
+  if (schoolId > 0) {
     isExist = true;
   }
   return isExist;
