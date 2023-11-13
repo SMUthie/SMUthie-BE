@@ -81,3 +81,33 @@ exports.getEmailAuthCode = async (schoolId) => {
     await client.close();
   }
 };
+
+exports.finishEmailAuthCode = async (schoolId) => {
+  try {
+    await client.connect();
+    console.log('Connected successfully to server');
+    const db = client.db(dbName);
+    const noticeCollection = db.collection('email_auth');
+
+    // the following code examples can be pasted here...
+    const notice = await noticeCollection.findOne(
+      { school_id: schoolId },
+      { sort: { createdAt: -1 } }
+    );
+
+    // if ((await notices.estimatedDocumentCount()) === 0) {
+    //     console.log('No documents found!');
+    // }
+    if (!notice) {
+      return false;
+    }
+
+    const myquery = { _id: notice._id };
+    const newvalues = { $set: { auth_code: 'finish' } };
+    await noticeCollection.updateOne(myquery, newvalues);
+    return true;
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+};

@@ -13,6 +13,8 @@ module.exports = function (app) {
 
   app.get('/app/user/sendEmail', user.sendEmail);
 
+  app.get('/auth/auth_email', user.authEmail);
+
   // 1. 유저 생성 (회원가입) API
   app.post('/app/user/register', user.postUsers);
 

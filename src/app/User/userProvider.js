@@ -2,8 +2,12 @@ const baseResponseStatus = require('../../../config/baseResponseStatus');
 const { pool } = require('../../../config/database');
 const { errResponse, response } = require('../../../config/response');
 const { logger } = require('../../../config/winston');
-const { saveAuthCode, getEmailAuthCode } = require('../../../crawling/mealDb');
-const { encrypt } = require('../../../util/crypter');
+const {
+  saveAuthCode,
+  getEmailAuthCode,
+  finishEmailAuthCode,
+} = require('../../../crawling/mealDb');
+const { encrypt, decrypt } = require('../../../util/crypter');
 const { renderAuthEmail } = require('../../../util/ejsRender');
 const { sendEmailUseSchoolId } = require('../../../util/email');
 const { verifyRToken, signAToken } = require('../../../util/jwtUtil');
@@ -28,7 +32,7 @@ const generateAuthUrl = (schoolId, randomCode) => {
 
   const LINK_DOMAIN =
     process.env.NODE_ENV == 'test'
-      ? 'http://localhost:8001'
+      ? 'http://localhost:3000'
       : process.env.EMAIL_AUTH_DOMAIN;
 
   return `${LINK_DOMAIN}/auth/auth_email?code=${ENCODED_QUERY}`;
@@ -86,6 +90,32 @@ exports.sendEmail = async function (schoolId) {
   const AUTH_EMAIL_HTML = await renderAuthEmail(AUTH_URL); //보낼 이메일 내용을 랜더링하기
   sendEmailUseSchoolId(schoolId, '스무디 학생 인증', AUTH_EMAIL_HTML); // 해당 내용을 학번으로 이메일 보내기
   return response(baseResponseStatus.SUCCESS);
+};
+
+exports.authEmail = async function (code) {
+  const DECODED_CODE = decodeURIComponent(code);
+  const AUTH_QUERY_ARRAY = decrypt(
+    DECODED_CODE,
+    process.env.AUTH_QUERY_SECRET_KEY
+  ).split('&&');
+  const URL_SCHOOL_ID = AUTH_QUERY_ARRAY[0];
+  const URL_AUTH_CODE = AUTH_QUERY_ARRAY[1];
+
+  const DB_AUTH_CODE = await getEmailAuthCode(URL_SCHOOL_ID);
+  console.log(DB_AUTH_CODE);
+  console.log(URL_AUTH_CODE);
+
+  if (!DB_AUTH_CODE) {
+    console.log('Email Auth Error: 사용자 존재하지 않음');
+    return "<script>alert('시간이 지나 이메일 인증이 실패했습니다. 인증 링크를 다시 한 번 확인하세요.');</script>";
+  }
+
+  if (DB_AUTH_CODE == URL_AUTH_CODE) {
+    await finishEmailAuthCode(URL_SCHOOL_ID);
+    return "<script>alert('이메일 인증이 완료되었습니다!');</script>";
+  } else {
+    return "<script>alert('이메일 인증이 실패했습니다. 인증 링크를 다시 한 번 확인하세요.');</script>";
+  }
 };
 
 exports.userStatCheckBySchoolId = async function (student_id) {
