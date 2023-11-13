@@ -19,3 +19,17 @@ exports.retrieveStores = async function () {
   }
 }
 
+exports.retrieveRestaurants = async function () { 
+  try {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const restaurantListResult = await mapDao.selectRestaurants(connection);
+    connection.release();
+
+    return restaurantListResult;  
+  } catch (err) {
+    logger.error(`[ERROR] ${err.message}`);   
+    return errResponse(baseResponse.DB_ERROR); 
+  }
+}
+
+

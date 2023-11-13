@@ -7,7 +7,17 @@ const { response, errResponse } = require('../../../config/response');
  * API Name : 지도 전체 식당 목록 조회 API
  * [GET] /app/map/store
  */
-exports.getRestaurants = async function (req, res) {
+exports.getStores = async function (req, res) {
   const storeListResult = await mapProvider.retrieveStores();
   return res.send(response(baseResponse.SUCCESS, storeListResult));
+};
+
+/**
+ * API No. 2
+ * API Name : 지도 음식점 목록 조회 API
+ * [GET] /app/map/restaurant
+ */
+exports.getRestaurants = async function (req, res) {
+  const restaurantListResult = await mapProvider.retrieveRestaurants();
+  return res.send(response(baseResponse.SUCCESS, restaurantListResult));
 };

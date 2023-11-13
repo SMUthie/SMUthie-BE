@@ -11,3 +11,20 @@ async function selectStores(connection) {
 module.exports = {
   selectStores,
 };
+
+// 지도 음식점 조회 
+async function selectRestaurants(connection) {
+  const selectRestaurantsQuery = `
+                SELECT store_idx, latitude, longitude, name, telephone, time, mark_image
+                FROM SMUthie.Store
+                WHERE category = "R"
+                  OR category = "A";
+                `;
+  const [restaurantRows] = await connection.query(selectRestaurantsQuery);
+  return restaurantRows;
+}
+
+module.exports = {
+  selectStores,
+  selectRestaurants,
+};
