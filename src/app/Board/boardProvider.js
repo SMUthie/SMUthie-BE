@@ -31,9 +31,32 @@ const findStoreAndBestMenu = async function (conn) {
   return result;
 };
 
+const getStoreAndMenuInfo = async function (conn, userId, storeId) {
+  let result = {};
+
+  const storeDetail = await boardDao.selectStoreDetail(conn, storeId);
+  result = storeDetail[0];
+
+  const menuInfoList = await boardDao.selectMenusByStore(conn, storeId);
+  for (let i = 0; i < menuInfoList.length; i++) {
+    const isLiked = await boardDao.checkUserLikeMenu(conn, userId, storeId);
+    menuInfoList[i]['is_liked'] = isLiked;
+  }
+
+  result['menus'] = menuInfoList;
+  return result;
+};
+
 exports.getBoardCategoryList = async function () {
   const connection = await pool.getConnection(async (conn) => conn);
   const res = await findStoreAndBestMenu(connection);
+  connection.release();
+  return response(baseResponseStatus.SUCCESS, res);
+};
+
+exports.getStoreInfo = async function (userId, storeId) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const res = await getStoreAndMenuInfo(connection, userId, storeId);
   connection.release();
   return response(baseResponseStatus.SUCCESS, res);
 };

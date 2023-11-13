@@ -3,4 +3,6 @@ module.exports = function (app) {
   const { verifyAToken } = require('../../../config/jwtVerify');
 
   app.get('/app/board/category', board.getBoardCategory);
+
+  app.get('/app/board/detail/:storeId', verifyAToken, board.getStoreInfo);
 };
