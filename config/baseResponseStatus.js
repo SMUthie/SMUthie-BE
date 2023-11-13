@@ -148,6 +148,12 @@ module.exports = {
     message: '회원 인덱스를 입력해주세요',
   },
 
+  STORE_IDX_EMPTY: {
+    isSuccess: false,
+    code: 2020,
+    message: '가게 인덱스를 입력해주세요',
+  },
+
   // Response error
   SIGNUP_REDUNDANT_EMAIL: {
     isSuccess: false,
