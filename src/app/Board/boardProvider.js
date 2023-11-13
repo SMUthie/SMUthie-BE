@@ -19,16 +19,12 @@ const addBestMenuInStores = async function (conn, stores) {
   return stores;
 };
 
-const findStoreAndBestMenu = async function (conn) {
+const findStoreAndBestMenuByType = async function (conn, storeType) {
+  //['A', 'R', 'C']
   const result = {};
-  storeType = ['A', 'R', 'C'];
-  for (let i = 0; i < storeType.length; i++) {
-    const type = storeType[i];
-    let stores = await boardDao.selectStoreListByCategory(conn, type);
-    stores = await addBestMenuInStores(conn, stores);
-    result[type] = stores;
-  }
-  return result;
+  let stores = await boardDao.selectStoreListByCategory(conn, storeType);
+  stores = await addBestMenuInStores(conn, stores);
+  return stores;
 };
 
 const getStoreAndMenuInfo = async function (conn, userId, storeId) {
@@ -47,11 +43,37 @@ const getStoreAndMenuInfo = async function (conn, userId, storeId) {
   return result;
 };
 
-exports.getBoardCategoryList = async function () {
+const checkStoreLocation = function (store) {
+  if (store.address.indexOf('상명대학교') >= 0) {
+    store['up'] = true;
+  } else {
+    store['up'] = false;
+  }
+  return store;
+};
+
+exports.getBoardRestaurant = async function () {
   const connection = await pool.getConnection(async (conn) => conn);
-  const res = await findStoreAndBestMenu(connection);
+  const resultA = await findStoreAndBestMenuByType(connection, 'A');
+  const resultR = await findStoreAndBestMenuByType(connection, 'R');
+  resultA.push(...resultR);
+  for (let i = 0; i < resultA.length; i++) {
+    resultA[i] = checkStoreLocation(resultA[i]);
+  }
   connection.release();
-  return response(baseResponseStatus.SUCCESS, res);
+  return response(baseResponseStatus.SUCCESS, resultA);
+};
+
+exports.getBoardCafeteria = async function () {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const result = await findStoreAndBestMenuByType(connection, 'C');
+  connection.release();
+
+  for (let i = 0; i < result.length; i++) {
+    result[i] = checkStoreLocation(result[i]);
+  }
+
+  return response(baseResponseStatus.SUCCESS, result);
 };
 
 exports.getStoreInfo = async function (userId, storeId) {

@@ -1,6 +1,6 @@
 async function selectStoreListByCategory(connection, category) {
   const query = `
-  SELECT Store.store_idx AS store_index, Store.name AS store_name 
+  SELECT Store.store_idx AS store_index, Store.name AS store_name, Store.address
   FROM Store 
   WHERE Store.category = ? ;
   `;

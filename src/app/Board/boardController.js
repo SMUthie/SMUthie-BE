@@ -6,10 +6,28 @@ const {
 const { errResponse } = require('../../../config/response');
 const boardProvider = require('../../app/Board/boardProvider');
 
-exports.getBoardCategory = async function (req, res) {
+// exports.getBoardCategory = async function (req, res) {
+//   try {
+//     const boardCategoryList = await boardProvider.getBoardCategoryList();
+//     return res.send(boardCategoryList);
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
+
+exports.getBoardRestaurant = async function (req, res) {
   try {
-    const boardCategoryList = await boardProvider.getBoardCategoryList();
-    return res.send(boardCategoryList);
+    const boardRestaurant = await boardProvider.getBoardRestaurant();
+    return res.send(boardRestaurant);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+exports.getBoardCafeteria = async function (req, res) {
+  try {
+    const boardCafeteria = await boardProvider.getBoardCafeteria();
+    return res.send(boardCafeteria);
   } catch (error) {
     console.error(error);
   }
