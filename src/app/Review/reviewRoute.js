@@ -10,7 +10,7 @@ module.exports = function(app){
     app.post('/app/board/review/:storeIdx', verifyAToken, review.postReview); 
 
     // 3. 리뷰글 상세 조회 API
-    app.get('/app/board/review/detail/:reviewIdx', review.getReview); 
+    app.get('/app/board/review/detail/:reviewIdx', verifyAToken, review.getReview); 
 
     // 4. 리뷰글 수정 API
     app.patch('/app/board/review/:reviewIdx', verifyAToken, review.patchReview); 

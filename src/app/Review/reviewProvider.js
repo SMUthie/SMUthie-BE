@@ -21,13 +21,19 @@ exports.retrieveReviewList = async function (storeIdx) {
 }
 
 // 가게 리뷰글 상세 조회
-exports.retrieveReview = async function (reviewIdx) { 
+exports.retrieveReview = async function (reviewIdx, userIdx) { 
   try {
     const connection = await pool.getConnection(async (conn) => conn);
     const reviewResult = await reviewDao.selectReview(connection, reviewIdx);
+    const isLikedResult = await reviewDao.selectIsLiked(connection, reviewIdx, userIdx);
+    const isUnlikedResult = await reviewDao.selectIsUnliked(connection, reviewIdx, userIdx);
+    const result = reviewResult[0];
+
+    result['isLiked'] = isLikedResult;
+    result['isUnliked'] = isUnlikedResult;
 
     connection.release();
-    return reviewResult;  
+    return reviewResult;
   } catch (err) {
     logger.error(`[ERROR] ${err.message}`);   
     return errResponse(baseResponse.DB_ERROR); 

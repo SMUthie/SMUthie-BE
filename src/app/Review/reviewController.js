@@ -62,7 +62,8 @@ exports.postReview = async function (req, res) {
  */
 exports.getReview = async function (req, res) {
   const reviewIdx = req.params.reviewIdx;
-  const reviewResult = await reviewProvider.retrieveReview(reviewIdx);
+  const userIdx = req.user_idx;
+  const reviewResult = await reviewProvider.retrieveReview(reviewIdx, userIdx);
 
   return res.send(response(baseResponse.SUCCESS, reviewResult));
 };
