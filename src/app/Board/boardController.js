@@ -15,19 +15,10 @@ const boardProvider = require('../../app/Board/boardProvider');
 //   }
 // };
 
-exports.getBoardRestaurant = async function (req, res) {
+exports.getBoardCategory = async function (req, res) {
   try {
-    const boardRestaurant = await boardProvider.getBoardRestaurant();
-    return res.send(boardRestaurant);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-exports.getBoardCafeteria = async function (req, res) {
-  try {
-    const boardCafeteria = await boardProvider.getBoardCafeteria();
-    return res.send(boardCafeteria);
+    const boardCategory = await boardProvider.getBoardCategory();
+    return res.send(boardCategory);
   } catch (error) {
     console.error(error);
   }
