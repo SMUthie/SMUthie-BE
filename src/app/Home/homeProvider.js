@@ -34,9 +34,9 @@ exports.retrieveAndamiro = async function () {
 
 const addMealPrice = function (meal) {
   const PRICE_LIST = {
-    천원: 1000,
-    자율한식: 6000,
-    푸드코트: 5000,
+    천원: '1000원',
+    자율한식: '6000원',
+    푸드코트: '4000원~6000원',
   };
   for (let key in PRICE_LIST) {
     if (meal.mealName.indexOf(key) >= 0) {
