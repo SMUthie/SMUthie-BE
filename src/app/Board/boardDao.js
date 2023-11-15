@@ -56,10 +56,34 @@ async function checkUserLikeMenu(connection, userId, menuId) {
   return false;
 }
 
+async function insertUserLikeMenu(connection, userId, menuId) {
+  const query = `
+  INSERT INTO 
+    UserLikedMenu(user_idx, menu_idx) 
+    VALUES (?, ?);
+  `;
+
+  const [resultRows] = await connection.query(query, [userId, menuId]);
+  return;
+}
+
+async function deleteUserLikeMenu(connection, userId, menuId) {
+  const query = `
+  DELETE FROM UserLikedMenu
+  WHERE user_idx = ? 
+    And menu_idx = ? ;
+  `;
+
+  const [resultRows] = await connection.query(query, [userId, menuId]);
+  return;
+}
+
 module.exports = {
   selectStoreListByCategory,
   selectBestMenu,
   selectStoreDetail,
   selectMenusByStore,
   checkUserLikeMenu,
+  insertUserLikeMenu,
+  deleteUserLikeMenu,
 };

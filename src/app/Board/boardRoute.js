@@ -5,4 +5,6 @@ module.exports = function (app) {
   app.get('/app/board/category', board.getBoardCategory);
 
   app.get('/app/board/detail/:storeId', verifyAToken, board.getStoreInfo);
+
+  app.put('/app/board/likeMenu/:menuId', verifyAToken, board.likeMenu);
 };
