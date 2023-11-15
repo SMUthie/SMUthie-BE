@@ -20,6 +20,26 @@ async function selectBestMenu(connection, restaurantIdx) {
   return resultRows;
 }
 
+async function selectCafeCategory(connection, cafeIndex) {
+  const query = `
+  SELECT Store.cafe_hashtag as cafe_tag
+  FROM Store 
+  WHERE Store.store_idx = ?
+  `;
+  const [resultRows] = await connection.query(query, cafeIndex);
+  return resultRows;
+}
+
+async function selectAllReviewImageByStore(connection, storeIndex) {
+  const query = `
+  SELECT Review.image_url
+  FROM Review 
+  WHERE Review.store_idx = ? ;
+  `;
+  const [resultRows] = await connection.query(query, storeIndex);
+  return resultRows;
+}
+
 async function selectStoreDetail(connection, storeId) {
   const query = `
   SELECT Store.name as store_name, Store.store_idx, Store.time as store_time, Store.telephone as store_tel
@@ -81,6 +101,8 @@ async function deleteUserLikeMenu(connection, userId, menuId) {
 module.exports = {
   selectStoreListByCategory,
   selectBestMenu,
+  selectCafeCategory,
+  selectAllReviewImageByStore,
   selectStoreDetail,
   selectMenusByStore,
   checkUserLikeMenu,

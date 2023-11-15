@@ -4,26 +4,59 @@ const boardDao = require('./boardDao');
 const baseResponseStatus = require('../../../config/baseResponseStatus');
 const { response } = require('../../../config/response');
 
-const addBestMenuInStores = async function (conn, stores) {
-  for (let i = 0; i < stores.length; i++) {
-    const storeIndex = stores[i].store_index;
+const addBestMenuInStore = async function (conn, store, storeType) {
+  const storeIndex = store.store_index;
+  store.menu_index = 0;
+  store.menu_name = '입력예정';
+  if (storeType == 'C') {
+    const cafeCategory = await boardDao.selectCafeCategory(conn, storeIndex);
+    if (cafeCategory.length != 0 && cafeCategory[0].cafe_tag) {
+      store.menu_name = cafeCategory[0].cafe_tag;
+    }
+  } else {
     const bestMenuResult = await boardDao.selectBestMenu(conn, storeIndex);
     if (bestMenuResult.length != 0) {
-      stores[i].menu_index = bestMenuResult[0].menu_index;
-      stores[i].menu_name = bestMenuResult[0].menu_name;
-    } else {
-      stores[i].menu_index = 0;
-      stores[i].menu_name = '입력예정';
+      store.menu_index = bestMenuResult[0].menu_index;
+      store.menu_name = bestMenuResult[0].menu_name;
     }
   }
-  return stores;
+
+  return store;
+};
+
+const getStoreImageList = async function (conn, storeId) {
+  const returnImageUrlList = [];
+  const allReviewImagesByStore = await boardDao.selectAllReviewImageByStore(
+    conn,
+    storeId
+  );
+  for (let i = 0; i < allReviewImagesByStore.length; i++) {
+    const imageString = allReviewImagesByStore[i];
+    if (!imageString || !imageString.image_url) continue;
+
+    const imageList = imageString.image_url.split(',');
+    imageList.forEach((imageUrl) => {
+      returnImageUrlList.push(imageUrl);
+      if (returnImageUrlList.length >= 3) {
+        return returnImageUrlList;
+      }
+    });
+  }
+  while (returnImageUrlList.length < 3) {
+    const defaultImageUrl = 'https://picsum.photos/id/292/800/600';
+    returnImageUrlList.push(defaultImageUrl);
+  }
+  return returnImageUrlList;
 };
 
 const findStoreAndBestMenuByType = async function (conn, storeType) {
   //['A', 'R', 'C']
   const result = {};
   let stores = await boardDao.selectStoreListByCategory(conn, storeType);
-  stores = await addBestMenuInStores(conn, stores);
+
+  for (let i = 0; i < stores.length; i++) {
+    stores[i] = await addBestMenuInStore(conn, stores[i], storeType);
+  }
   return stores;
 };
 
@@ -40,6 +73,7 @@ const getStoreAndMenuInfo = async function (conn, userId, storeId) {
   }
 
   result['menus'] = menuInfoList;
+  result['images'] = await getStoreImageList(conn, storeId);
   return result;
 };
 
