@@ -32,9 +32,28 @@ exports.retrieveAndamiro = async function () {
   }
 };
 
+const addMealPrice = function (meal) {
+  const PRICE_LIST = {
+    천원: 1000,
+    자율한식: 6000,
+    푸드코트: 5000,
+  };
+  for (let key in PRICE_LIST) {
+    if (meal.mealName.indexOf(key) >= 0) {
+      meal['price'] = PRICE_LIST[key];
+      return meal;
+    }
+  }
+  meal['price'] = 0;
+  return meal;
+};
+
 exports.retrieveSchoolMeal = async function () {
   try {
     const menuListResult = await homeDao.selectWeeklyMeal();
+    for (let i = 0; i < menuListResult.length; i++) {
+      menuListResult[i] = addMealPrice(menuListResult[i]);
+    }
     return menuListResult;
   } catch (err) {
     logger.error(`[ERROR] ${err.message}`);

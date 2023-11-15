@@ -3,7 +3,15 @@ const { MongoClient } = require('mongodb');
 // import { MongoClient } from 'mongodb'
 
 // Connection URL
-const url = `mongodb://admin:capstone@${process.env.MONGODB_IP}:27017`;
+// const url = `mongodb://admin:capstone@${process.env.MONGODB_IP}:27017`;
+
+const MONGODB_DOMAIN =
+  process.env.NODE_ENV == 'test'
+    ? 'localhost'
+    : 'admin:capstone@' + process.env.MONGODB_IP;
+
+const url = `mongodb://${MONGODB_DOMAIN}:27017`;
+
 const client = new MongoClient(url);
 
 // Database Name
