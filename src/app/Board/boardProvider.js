@@ -3,6 +3,7 @@ const { pool } = require('../../../config/database');
 const boardDao = require('./boardDao');
 const baseResponseStatus = require('../../../config/baseResponseStatus');
 const { response } = require('../../../config/response');
+const { addStoreViews } = require('./boardService');
 
 const addBestMenuInStore = async function (conn, store, storeType) {
   const storeIndex = store.store_index;
@@ -110,6 +111,7 @@ exports.getBoardCategory = async function () {
 exports.getStoreInfo = async function (userId, storeId) {
   const connection = await pool.getConnection(async (conn) => conn);
   const res = await getStoreAndMenuInfo(connection, userId, storeId);
+  await addStoreViews(connection, storeId);
   connection.release();
   return response(baseResponseStatus.SUCCESS, res);
 };

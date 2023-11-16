@@ -42,7 +42,7 @@ async function selectAllReviewImageByStore(connection, storeIndex) {
 
 async function selectStoreDetail(connection, storeId) {
   const query = `
-  SELECT Store.name as store_name, Store.store_idx, Store.time as store_time, Store.telephone as store_tel
+  SELECT Store.name as store_name, Store.store_idx, Store.time as store_time, Store.telephone as store_tel, Store.view_count as store_views
   FROM Store
   WHERE Store.store_idx = ? ;
   `;
@@ -98,6 +98,28 @@ async function setMenuLikes(connection, menuId, newLikes) {
   return;
 }
 
+async function getStoreViews(connection, storeId) {
+  const query = `
+  SELECT Store.view_count
+  FROM Store
+  WHERE Store.store_idx = ?;
+  `;
+
+  const [resultRows] = await connection.query(query, storeId);
+  return resultRows[0].view_count;
+}
+
+async function setStoreViews(connection, storeId, newViews) {
+  const query = `
+  UPDATE Store
+  SET Store.view_count = ?
+  WHERE Store.store_idx = ?;
+  `;
+
+  const [resultRows] = await connection.query(query, [newViews, storeId]);
+  return;
+}
+
 async function insertUserLikeMenu(connection, userId, menuId) {
   const query = `
   INSERT INTO 
@@ -130,6 +152,8 @@ module.exports = {
   checkUserLikeMenu,
   getMenuLikes,
   setMenuLikes,
+  getStoreViews,
+  setStoreViews,
   insertUserLikeMenu,
   deleteUserLikeMenu,
 };

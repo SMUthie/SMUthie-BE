@@ -7,6 +7,8 @@ const {
   deleteUserLikeMenu,
   getMenuLikes,
   setMenuLikes,
+  getStoreViews,
+  setStoreViews,
 } = require('./boardDao');
 
 const addMenuLikes = async function (conn, menuId, nowLiked) {
@@ -15,6 +17,12 @@ const addMenuLikes = async function (conn, menuId, nowLiked) {
   if (nowLiked) diff = 1;
   else diff = -1;
   await setMenuLikes(conn, menuId, nowLikes + diff);
+  return;
+};
+
+exports.addStoreViews = async function (conn, storeId) {
+  const nowViews = await getStoreViews(conn, storeId);
+  await setStoreViews(conn, storeId, nowViews + 1);
   return;
 };
 
