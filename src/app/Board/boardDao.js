@@ -76,6 +76,28 @@ async function checkUserLikeMenu(connection, userId, menuId) {
   return false;
 }
 
+async function getMenuLikes(connection, menuId) {
+  const query = `
+  SELECT Menu.likes
+  FROM Menu
+  WHERE menu_idx = ?;
+  `;
+
+  const [resultRows] = await connection.query(query, menuId);
+  return resultRows[0].likes;
+}
+
+async function setMenuLikes(connection, menuId, newLikes) {
+  const query = `
+  UPDATE Menu
+  SET Menu.likes = ?
+  WHERE Menu.menu_idx = ?;
+  `;
+
+  const [resultRows] = await connection.query(query, [newLikes, menuId]);
+  return;
+}
+
 async function insertUserLikeMenu(connection, userId, menuId) {
   const query = `
   INSERT INTO 
@@ -106,6 +128,8 @@ module.exports = {
   selectStoreDetail,
   selectMenusByStore,
   checkUserLikeMenu,
+  getMenuLikes,
+  setMenuLikes,
   insertUserLikeMenu,
   deleteUserLikeMenu,
 };

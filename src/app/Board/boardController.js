@@ -61,3 +61,5 @@ exports.likeMenu = async function (req, res) {
     console.error(error);
   }
 };
+
+exports.searchReview = async function (req, res) {};

@@ -7,4 +7,6 @@ module.exports = function (app) {
   app.get('/app/board/detail/:storeId', verifyAToken, board.getStoreInfo);
 
   app.put('/app/board/likeMenu/:menuId', verifyAToken, board.likeMenu);
+
+  app.get('/app/board/search', board.searchReview);
 };
