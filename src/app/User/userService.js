@@ -186,7 +186,7 @@ exports.editUserNickname = async function (userIdx, newNickname) {
 exports.deleteUser = async function (userIdx) {
   try {
     var connection = await pool.getConnection(async (conn) => conn);
-    await userDao.setUserStateDisable(connection, userIdx);
+    await userDao.deleteUser(connection, userIdx);
     connection.release();
     return response(baseResponse.SUCCESS);
   } catch (err) {

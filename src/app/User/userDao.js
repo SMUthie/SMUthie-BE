@@ -128,6 +128,15 @@ async function setUserStateDisable(connection, user_idx) {
   return updateUserRow[0];
 }
 
+async function deleteUser(connection, user_idx) {
+  const updateUserQuery = `
+  DELETE
+  FROM User
+  WHERE user_idx = ? `;
+  const updateUserRow = await connection.query(updateUserQuery, user_idx);
+  return updateUserRow[0];
+}
+
 async function updateUserPassword(connection, id, password) {
   const updateUserQuery = `
   UPDATE User
@@ -236,6 +245,7 @@ module.exports = {
   insertUserInfo,
   updateUserNickname,
   setUserStateDisable,
+  deleteUser,
   updateUserToken,
   updateUserPassword,
   selectRefreshTokenUseUserIdx,
