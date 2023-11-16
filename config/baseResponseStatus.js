@@ -154,6 +154,12 @@ module.exports = {
     message: '가게 인덱스를 입력해주세요',
   },
 
+  MENU_IDX_EMPTY: {
+    isSuccess: false,
+    code: 2021,
+    message: '메뉴 인덱스를 입력해주세요',
+  },
+
   // Response error
   SIGNUP_REDUNDANT_EMAIL: {
     isSuccess: false,
