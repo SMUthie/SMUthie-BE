@@ -11,6 +11,12 @@ module.exports = function (app) {
   // 유저 닉네임 중복체크 API
   app.get('/app/user/checkNickname', user.checkNicknameExist);
 
+  app.get('/app/user/sendEmail', user.sendEmail);
+
+  app.get('/auth/auth_email', user.authEmail);
+
+  app.get('/app/user/checkAuthStatus', user.checkAuthStatus);
+
   // 1. 유저 생성 (회원가입) API
   app.post('/app/user/register', user.postUsers);
 
