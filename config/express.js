@@ -24,6 +24,7 @@ module.exports = function () {
   require('../src/app/Board/boardRoute')(app);
   require('../src/app/Review/reviewRoute')(app);
   require('../src/app/Map/mapRoute')(app);
+  require('../src/app/Upload/uploadRoute')(app);
 
   return app;
 };
