@@ -132,6 +132,36 @@ exports.checkNicknameExist = async function (req, res) {
   return res.send(checkUserNickname);
 };
 
+exports.sendEmail = async function (req, res) {
+  const SCHOOL_ID = req.query.schoolId;
+  if (!SCHOOL_ID) return res.send(errResponse(baseResponse.SCHOOL_ID_EMPTY));
+
+  const sendEmailResult = await userProvider.sendEmail(SCHOOL_ID);
+  return res.send(sendEmailResult);
+};
+
+exports.authEmail = async function (req, res) {
+  if (!req.query.code) {
+    console.log('Email Auth Error: 요청양식 틀림');
+    return res
+      .status(404)
+      .send(
+        "<script>alert('이메일 인증이 실패했습니다. 인증 링크를 다시 한 번 확인하세요.');</script>"
+      );
+  }
+
+  const authEmail = await userProvider.authEmail(req.query.code);
+  return res.send(authEmail);
+};
+
+exports.checkAuthStatus = async function (req, res) {
+  const SCHOOL_ID = req.query.schoolId;
+  if (!SCHOOL_ID) return res.send(errResponse(baseResponse.SCHOOL_ID_EMPTY));
+
+  const authStatus = await userProvider.checkAuthStatus(SCHOOL_ID);
+  return res.send(authStatus);
+};
+
 /**
  * API No. ?
  * API Name : 회원 정보 수정 API + JWT

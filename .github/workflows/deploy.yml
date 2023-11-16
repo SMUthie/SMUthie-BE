@@ -46,6 +46,8 @@ jobs:
           echo AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} >> .env
           echo AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> .env
           echo S3_BUCKET=${{ secrets.S3_BUCKET }} >> .env
+          echo AUTH_QUERY_SECRET_KEY=${{ secrets.AUTH_QUERY_SECRET_KEY }} >> .env
+          echo EMAIL_AUTH_DOMAIN=${{ secrets.EMAIL_AUTH_DOMAIN }} >> .env
           cat .env
 
       - name: dependency #필요한 dependency들을 설치하고 빌드
