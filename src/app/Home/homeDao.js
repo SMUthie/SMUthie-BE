@@ -17,7 +17,7 @@ async function selectAndamiro(connection) {
   const selectAndamiroQuery = `
                 SELECT menu_name, price, likes, comment, image_url
                 FROM Menu
-                WHERE store_idx = 1;
+                WHERE store_idx = 13;
                 `;
   const [menuRows] = await connection.query(selectAndamiroQuery);
   return menuRows;
