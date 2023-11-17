@@ -44,6 +44,15 @@ exports.getStoreInfo = async function (req, res) {
   }
 };
 
+exports.forceResetStoreViews = async function (req, res) {
+  try {
+    const result = await boardService.forceResetStoreViews();
+    return res.send(result);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 exports.likeMenu = async function (req, res) {
   try {
     const MENU_ID = req.params.menuId;
@@ -61,3 +70,13 @@ exports.likeMenu = async function (req, res) {
     console.error(error);
   }
 };
+
+// const str2List = function (strList, splitString) {};
+
+// exports.searchReview = async function (req, res) {
+//   const STORE_ID = req.params.storeId;
+//   const REQ_LIMIT = req.headers['x-limit'];
+//   const REQ_OFFSET = req.headers['x-offset'];
+//   const menuListString = req.headers['x-menu-id-list'];
+//   const MENU_LIST = menuListString.split(',');
+// };

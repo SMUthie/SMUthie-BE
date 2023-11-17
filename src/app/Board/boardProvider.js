@@ -3,6 +3,7 @@ const { pool } = require('../../../config/database');
 const boardDao = require('./boardDao');
 const baseResponseStatus = require('../../../config/baseResponseStatus');
 const { response } = require('../../../config/response');
+const { addStoreViews } = require('./boardService');
 
 const addBestMenuInStore = async function (conn, store, storeType) {
   const storeIndex = store.store_index;
@@ -43,7 +44,8 @@ const getStoreImageList = async function (conn, storeId) {
     });
   }
   while (returnImageUrlList.length < 3) {
-    const defaultImageUrl = 'https://picsum.photos/id/292/800/600';
+    const defaultImageUrl =
+      'https://smuthie.s3.ap-northeast-2.amazonaws.com/default/base.jpeg';
     returnImageUrlList.push(defaultImageUrl);
   }
   return returnImageUrlList;
@@ -110,6 +112,7 @@ exports.getBoardCategory = async function () {
 exports.getStoreInfo = async function (userId, storeId) {
   const connection = await pool.getConnection(async (conn) => conn);
   const res = await getStoreAndMenuInfo(connection, userId, storeId);
+  await addStoreViews(connection, storeId);
   connection.release();
   return response(baseResponseStatus.SUCCESS, res);
 };

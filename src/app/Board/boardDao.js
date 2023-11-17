@@ -42,7 +42,7 @@ async function selectAllReviewImageByStore(connection, storeIndex) {
 
 async function selectStoreDetail(connection, storeId) {
   const query = `
-  SELECT Store.name as store_name, Store.store_idx, Store.time as store_time, Store.telephone as store_tel
+  SELECT Store.name as store_name, Store.store_idx, Store.time as store_time, Store.telephone as store_tel, Store.view_count as store_views
   FROM Store
   WHERE Store.store_idx = ? ;
   `;
@@ -76,6 +76,50 @@ async function checkUserLikeMenu(connection, userId, menuId) {
   return false;
 }
 
+async function getMenuLikes(connection, menuId) {
+  const query = `
+  SELECT Menu.likes
+  FROM Menu
+  WHERE menu_idx = ?;
+  `;
+
+  const [resultRows] = await connection.query(query, menuId);
+  return resultRows[0].likes;
+}
+
+async function setMenuLikes(connection, menuId, newLikes) {
+  const query = `
+  UPDATE Menu
+  SET Menu.likes = ?
+  WHERE Menu.menu_idx = ?;
+  `;
+
+  const [resultRows] = await connection.query(query, [newLikes, menuId]);
+  return;
+}
+
+async function getStoreViews(connection, storeId) {
+  const query = `
+  SELECT Store.view_count
+  FROM Store
+  WHERE Store.store_idx = ?;
+  `;
+
+  const [resultRows] = await connection.query(query, storeId);
+  return resultRows[0].view_count;
+}
+
+async function setStoreViews(connection, storeId, newViews) {
+  const query = `
+  UPDATE Store
+  SET Store.view_count = ?
+  WHERE Store.store_idx = ?;
+  `;
+
+  const [resultRows] = await connection.query(query, [newViews, storeId]);
+  return;
+}
+
 async function insertUserLikeMenu(connection, userId, menuId) {
   const query = `
   INSERT INTO 
@@ -98,6 +142,17 @@ async function deleteUserLikeMenu(connection, userId, menuId) {
   return;
 }
 
+async function forceUpdateStoreViewsToZero(connection) {
+  const query = `
+  UPDATE Store
+  SET view_count = 0
+  WHERE 1 ;
+  `;
+
+  const [resultRows] = await connection.query(query);
+  return;
+}
+
 module.exports = {
   selectStoreListByCategory,
   selectBestMenu,
@@ -106,6 +161,11 @@ module.exports = {
   selectStoreDetail,
   selectMenusByStore,
   checkUserLikeMenu,
+  getMenuLikes,
+  setMenuLikes,
+  getStoreViews,
+  setStoreViews,
   insertUserLikeMenu,
   deleteUserLikeMenu,
+  forceUpdateStoreViewsToZero,
 };

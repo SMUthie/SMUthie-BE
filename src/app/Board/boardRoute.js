@@ -6,5 +6,7 @@ module.exports = function (app) {
 
   app.get('/app/board/detail/:storeId', verifyAToken, board.getStoreInfo);
 
+  app.delete('/app/board/forceresetstoreviews', board.forceResetStoreViews);
+
   app.put('/app/board/likeMenu/:menuId', verifyAToken, board.likeMenu);
 };
