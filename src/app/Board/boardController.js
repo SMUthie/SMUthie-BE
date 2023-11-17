@@ -62,12 +62,12 @@ exports.likeMenu = async function (req, res) {
   }
 };
 
-const str2List = function (strList, splitString) {};
+// const str2List = function (strList, splitString) {};
 
-exports.searchReview = async function (req, res) {
-  const STORE_ID = req.params.storeId;
-  const REQ_LIMIT = req.headers['x-limit'];
-  const REQ_OFFSET = req.headers['x-offset'];
-  const menuListString = req.headers['x-menu-id-list'];
-  const MENU_LIST = menuListString.split(',');
-};
+// exports.searchReview = async function (req, res) {
+//   const STORE_ID = req.params.storeId;
+//   const REQ_LIMIT = req.headers['x-limit'];
+//   const REQ_OFFSET = req.headers['x-offset'];
+//   const menuListString = req.headers['x-menu-id-list'];
+//   const MENU_LIST = menuListString.split(',');
+// };
