@@ -28,12 +28,15 @@ exports.retrieveReview = async function (reviewIdx, userIdx) {
     const isLikedResult = await reviewDao.selectIsLiked(connection, reviewIdx, userIdx);
     const isUnlikedResult = await reviewDao.selectIsUnliked(connection, reviewIdx, userIdx);
     const result = reviewResult[0];
+    const images = result['image_url'].split(',')
 
     result['isLiked'] = isLikedResult;
     result['isUnliked'] = isUnlikedResult;
+    result['image_url'] = images;
+    console.log(images);
 
     connection.release();
-    return reviewResult;
+    return result;
   } catch (err) {
     logger.error(`[ERROR] ${err.message}`);   
     return errResponse(baseResponse.DB_ERROR); 
