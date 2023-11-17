@@ -142,6 +142,17 @@ async function deleteUserLikeMenu(connection, userId, menuId) {
   return;
 }
 
+async function forceUpdateStoreViewsToZero(connection) {
+  const query = `
+  UPDATE Store
+  SET view_count = 0
+  WHERE 1 ;
+  `;
+
+  const [resultRows] = await connection.query(query);
+  return;
+}
+
 module.exports = {
   selectStoreListByCategory,
   selectBestMenu,
@@ -156,4 +167,5 @@ module.exports = {
   setStoreViews,
   insertUserLikeMenu,
   deleteUserLikeMenu,
+  forceUpdateStoreViewsToZero,
 };

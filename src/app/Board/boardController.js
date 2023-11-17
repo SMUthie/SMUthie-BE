@@ -44,6 +44,15 @@ exports.getStoreInfo = async function (req, res) {
   }
 };
 
+exports.forceResetStoreViews = async function (req, res) {
+  try {
+    const result = await boardService.forceResetStoreViews();
+    return res.send(result);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 exports.likeMenu = async function (req, res) {
   try {
     const MENU_ID = req.params.menuId;

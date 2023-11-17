@@ -44,7 +44,8 @@ const getStoreImageList = async function (conn, storeId) {
     });
   }
   while (returnImageUrlList.length < 3) {
-    const defaultImageUrl = 'https://picsum.photos/id/292/800/600';
+    const defaultImageUrl =
+      'https://smuthie.s3.ap-northeast-2.amazonaws.com/default/base.jpeg';
     returnImageUrlList.push(defaultImageUrl);
   }
   return returnImageUrlList;

@@ -9,6 +9,7 @@ const {
   setMenuLikes,
   getStoreViews,
   setStoreViews,
+  forceUpdateStoreViewsToZero,
 } = require('./boardDao');
 
 const addMenuLikes = async function (conn, menuId, nowLiked) {
@@ -24,6 +25,13 @@ exports.addStoreViews = async function (conn, storeId) {
   const nowViews = await getStoreViews(conn, storeId);
   await setStoreViews(conn, storeId, nowViews + 1);
   return;
+};
+
+exports.forceResetStoreViews = async function () {
+  const connection = await pool.getConnection(async (conn) => conn);
+  await forceUpdateStoreViewsToZero(connection);
+  connection.release();
+  return true;
 };
 
 exports.likeMenu = async function (userId, menuId) {
