@@ -121,7 +121,7 @@ async function selectIsLiked(connection, reviewIdx, userIdx) {
   return false; // 좋아요를 하지 않았을 경우 false 반환
 }
 
-// 내가 좋아요 눌렀는지 확인
+// 내가 싫어요 눌렀는지 확인
 async function selectIsUnliked(connection, reviewIdx, userIdx) {
   const selectIsUnlikedQuery = `
     SELECT user_idx, review_idx
@@ -136,7 +136,53 @@ async function selectIsUnliked(connection, reviewIdx, userIdx) {
     return true;
   }
 
-  return false; // 좋아요를 하지 않았을 경우 false 반환
+  return false; // 싫어요를 하지 않았을 경우 false 반환
+}
+
+// 해당 유저의 리뷰 좋아요 추가
+async function insertUserLikeReview(connection, userIdx, reviewIdx) {
+  const insertUserLikeReviewQuery = `
+    INSERT INTO UserLikedReview(user_idx, review_idx) VALUES (?, ?);
+  `;
+
+  const [resultRows] = await connection.query(insertUserLikeReviewQuery, [userIdx, reviewIdx]);
+  return;
+}
+
+// 해당 유저의 리뷰 좋아요 제거
+async function deleteUserLikeReview(connection, userIdx, reviewIdx) {
+  const deleteUserLikeReviewQuery = `
+    DELETE FROM UserLikedReview
+    WHERE user_idx = ?
+      AND review_idx = ?;
+  `;
+
+  const [resultRows] = await connection.query(deleteUserLikeReviewQuery, [userIdx, reviewIdx]);
+  return;
+}
+
+// 특정 리뷰글 좋아요 수 조회
+async function getReviewLikes(connection, reviewIdx) {
+  const getReviewLikesQuery = `
+    SELECT likes
+    FROM review
+    WHERE review_idx = ?;
+  `;
+
+  const [resultRows] = await connection.query(getReviewLikesQuery, reviewIdx);
+  return resultRows[0].likes;
+}
+
+// 특정 리뷰글 좋아요 수 업데이트
+async function setReviewLikes(connection, reviewIdx, newLikes) {
+  const setReviewLikesQuery = `
+    UPDATE review
+    SET likes = ?
+    WHERE review_idx = ?;
+  `;
+
+  const [resultRows] = await connection.query(setReviewLikesQuery, [newLikes, reviewIdx]);
+  return;
 }
 
 module.exports = {
@@ -148,5 +194,9 @@ module.exports = {
   deleteReview,
   selectReviewWriter,
   selectIsLiked,
-  selectIsUnliked
+  selectIsUnliked,
+  insertUserLikeReview,
+  deleteUserLikeReview,
+  getReviewLikes,
+  setReviewLikes,
 };

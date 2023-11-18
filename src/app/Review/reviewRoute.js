@@ -15,6 +15,10 @@ module.exports = function(app){
     // 4. 리뷰글 수정 API
     app.patch('/app/board/review/:reviewIdx', verifyAToken, review.patchReview); 
 
-    // 5. 리뷰글 수정 API
+    // 5. 리뷰글 삭제 API
     app.delete('/app/board/review/:reviewIdx', verifyAToken, review.deleteReview); 
+
+    // 6. 리뷰글 좋아요 누르기
+    app.put('/app/board/review/like/:reviewIdx', verifyAToken, review.likeReview);
+
 };

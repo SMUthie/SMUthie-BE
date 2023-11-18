@@ -79,3 +79,38 @@ exports.deleteReview = async function(reviewIdx, USER_IDX) {
     return errResponse(baseResponse.DB_ERROR); 
   }
 }
+
+// 리뷰글 수 업데이트
+const addReviewLikes = async function (connection, reviewIdx, nowLiked) {
+  const nowLikes = await reviewDao.getReviewLikes(connection, reviewIdx);
+  let diff = 0; 
+
+  if (nowLiked) 
+    diff = 1;
+  else 
+    diff = -1;
+
+  await reviewDao.setReviewLikes(connection, reviewIdx, nowLikes + diff);
+  return;
+};
+
+// 사용자가 리뷰글 좋아요 눌렀을 때
+exports.likeReview = async function (userIdx, reviewIdx) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const isLiked = await reviewDao.selectIsLiked(connection, reviewIdx, userIdx);
+  const result = {
+    nowStatus: false,
+  };
+
+  if (isLiked) {
+    await reviewDao.deleteUserLikeReview(connection, userIdx, reviewIdx);
+    result.nowStatus = false;
+  } else {
+    await reviewDao.insertUserLikeReview(connection, userIdx, reviewIdx);
+    result.nowStatus = true;
+  }
+  await addReviewLikes(connection, reviewIdx, result.nowStatus);
+  connection.release();
+
+  return response(baseResponse.SUCCESS, result);
+};
