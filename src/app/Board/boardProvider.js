@@ -36,12 +36,13 @@ const getStoreImageList = async function (conn, storeId) {
     if (!imageString || !imageString.image_url) continue;
 
     const imageList = imageString.image_url.split(',');
-    imageList.forEach((imageUrl) => {
-      returnImageUrlList.push(imageUrl);
+    for (let i = 0; i < imageList.length; i++) {
+      const element = imageList[i];
+      returnImageUrlList.push(element);
       if (returnImageUrlList.length >= 3) {
         return returnImageUrlList;
       }
-    });
+    }
   }
   while (returnImageUrlList.length < 3) {
     const defaultImageUrl =
