@@ -70,7 +70,12 @@ const getStoreAndMenuInfo = async function (conn, userId, storeId) {
 
   const menuInfoList = await boardDao.selectMenusByStore(conn, storeId);
   for (let i = 0; i < menuInfoList.length; i++) {
-    const isLiked = await boardDao.checkUserLikeMenu(conn, userId, storeId);
+    const nowMenu = menuInfoList[i];
+    const isLiked = await boardDao.checkUserLikeMenu(
+      conn,
+      userId,
+      nowMenu.menu_index
+    );
     menuInfoList[i]['is_liked'] = isLiked;
   }
 
