@@ -21,4 +21,6 @@ module.exports = function(app){
     // 6. 리뷰글 좋아요 누르기
     app.put('/app/board/review/like/:reviewIdx', verifyAToken, review.likeReview);
 
+    // 7. 리뷰글 싫어요 누르기
+    app.put('/app/board/review/unlike/:reviewIdx', verifyAToken, review.unlikeReview);
 };

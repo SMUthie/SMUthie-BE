@@ -185,6 +185,53 @@ async function setReviewLikes(connection, reviewIdx, newLikes) {
   return;
 }
 
+// ----------------------------------------------------------------
+// 해당 유저의 리뷰 싫어요 추가
+async function insertUserUnlikeReview(connection, userIdx, reviewIdx) {
+  const insertUserUnlikeReviewQuery = `
+    INSERT INTO UserUnlikedReview(user_idx, review_idx) VALUES (?, ?);
+  `;
+
+  const [resultRows] = await connection.query(insertUserUnlikeReviewQuery, [userIdx, reviewIdx]);
+  return;
+}
+
+// 해당 유저의 리뷰 싫어요 제거
+async function deleteUserUnlikeReview(connection, userIdx, reviewIdx) {
+  const deleteUserUnlikeReviewQuery = `
+    DELETE FROM UserUnlikedReview
+    WHERE user_idx = ?
+      AND review_idx = ?;
+  `;
+
+  const [resultRows] = await connection.query(deleteUserUnlikeReviewQuery, [userIdx, reviewIdx]);
+  return;
+}
+
+// 특정 리뷰글 싫어요 수 조회
+async function getReviewUnlikes(connection, reviewIdx) {
+  const getReviewUnlikesQuery = `
+    SELECT unlikes
+    FROM review
+    WHERE review_idx = ?;
+  `;
+
+  const [resultRows] = await connection.query(getReviewUnlikesQuery, reviewIdx);
+  return resultRows[0].unlikes;
+}
+
+// 특정 리뷰글 싫어요 수 업데이트
+async function setReviewUnlikes(connection, reviewIdx, newUnlikes) {
+  const setReviewUnlikesQuery = `
+    UPDATE review
+    SET unlikes = ?
+    WHERE review_idx = ?;
+  `;
+
+  const [resultRows] = await connection.query(setReviewUnlikesQuery, [newUnlikes, reviewIdx]);
+  return;
+}
+
 module.exports = {
   selectReviewList,
   insertReview,
@@ -199,4 +246,8 @@ module.exports = {
   deleteUserLikeReview,
   getReviewLikes,
   setReviewLikes,
+  insertUserUnlikeReview,
+  deleteUserUnlikeReview,
+  getReviewUnlikes,
+  setReviewUnlikes,
 };

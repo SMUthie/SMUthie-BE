@@ -80,7 +80,7 @@ exports.deleteReview = async function(reviewIdx, USER_IDX) {
   }
 }
 
-// 리뷰글 수 업데이트
+// 리뷰글 좋아요 수 업데이트
 const addReviewLikes = async function (connection, reviewIdx, nowLiked) {
   const nowLikes = await reviewDao.getReviewLikes(connection, reviewIdx);
   let diff = 0; 
@@ -110,6 +110,41 @@ exports.likeReview = async function (userIdx, reviewIdx) {
     result.nowStatus = true;
   }
   await addReviewLikes(connection, reviewIdx, result.nowStatus);
+  connection.release();
+
+  return response(baseResponse.SUCCESS, result);
+};
+
+// 리뷰글 싫어요 수 업데이트
+const addReviewUnlikes = async function (connection, reviewIdx, nowUnliked) {
+  const nowUnlikes = await reviewDao.getReviewUnlikes(connection, reviewIdx);
+  let diff = 0; 
+
+  if (nowUnliked) 
+    diff = 1;
+  else 
+    diff = -1;
+
+  await reviewDao.setReviewUnlikes(connection, reviewIdx, nowUnlikes + diff);
+  return;
+};
+
+// 사용자가 리뷰글 좋아요 눌렀을 때
+exports.unlikeReview = async function (userIdx, reviewIdx) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const isUnliked = await reviewDao.selectIsUnliked(connection, reviewIdx, userIdx);
+  const result = {
+    nowStatus: false,
+  };
+
+  if (isUnliked) {
+    await reviewDao.deleteUserUnlikeReview(connection, userIdx, reviewIdx);
+    result.nowStatus = false;
+  } else {
+    await reviewDao.insertUserUnlikeReview(connection, userIdx, reviewIdx);
+    result.nowStatus = true;
+  }
+  await addReviewUnlikes(connection, reviewIdx, result.nowStatus);
   connection.release();
 
   return response(baseResponse.SUCCESS, result);

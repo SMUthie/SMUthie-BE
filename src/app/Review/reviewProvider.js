@@ -33,7 +33,6 @@ exports.retrieveReview = async function (reviewIdx, userIdx) {
     result['isLiked'] = isLikedResult;
     result['isUnliked'] = isUnlikedResult;
     result['image_url'] = images;
-    console.log(images);
 
     connection.release();
     return result;
