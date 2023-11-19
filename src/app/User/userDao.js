@@ -93,6 +93,15 @@ async function selectLoginUserStudentId(connection, student_id) {
   return loginUserRow;
 }
 
+async function selectUserPassword(connection, userId) {
+  const query = `
+  SELECT pw
+  FROM User
+  WHERE user_idx = ?`;
+  const [userRow] = await connection.query(query, userId);
+  return userRow;
+}
+
 // 유저 생성
 async function insertUserInfo(connection, insertUserInfoParams) {
   const insertUserInfoQuery = `
@@ -242,6 +251,7 @@ module.exports = {
   selectUserAndStatByNickname,
   countNickname,
   countSchoolId,
+  selectUserPassword,
   insertUserInfo,
   updateUserNickname,
   setUserStateDisable,

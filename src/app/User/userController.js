@@ -111,6 +111,22 @@ exports.refreshJWT = async function (req, res) {
   return res.send(newAccessToken);
 };
 
+exports.changePassword = async function (req, res) {
+  const USER_ID = req.user_idx;
+  const OLD_PASSWORD = req.body['oldPassword'];
+  const NEW_PASSWORD = req.body['newPassword'];
+  if (!OLD_PASSWORD || !NEW_PASSWORD) {
+    return res.send(errResponse(baseResponse.SIGNUP_PASSWORD_EMPTY));
+  }
+
+  const result = await userService.changePassword(
+    USER_ID,
+    OLD_PASSWORD,
+    NEW_PASSWORD
+  );
+  return res.send(result);
+};
+
 exports.findPassword = async function (req, res) {
   const SCHOOL_ID = req.body['schoolId'];
   if (!SCHOOL_ID) {

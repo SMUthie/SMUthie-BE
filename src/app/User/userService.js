@@ -105,6 +105,40 @@ exports.postSignIn = async function (student_id, password) {
   }
 };
 
+exports.changePassword = async function (userId, oldPassword, newPassword) {
+  try {
+    var connection = await pool.getConnection(async (conn) => conn);
+    const USER_INFO = await userDao.selectUserPassword(connection, userId);
+
+    //1. check used oldPassword
+    const selectedUserPassword = USER_INFO[0].pw;
+    const reqHashedPassword = await crypto
+      .createHash(process.env.PASSWORD_HASH)
+      .update(oldPassword)
+      .digest(process.env.PASSWORD_DIGEST);
+
+    if (selectedUserPassword !== reqHashedPassword) {
+      logger.info(`User Fail: [Old Password Wrong]`);
+      return errResponse(baseResponse.SIGNIN_PASSWORD_WRONG);
+    }
+
+    // 비밀번호 암호화
+    const hashedPassword = await crypto
+      .createHash(process.env.PASSWORD_HASH)
+      .update(newPassword)
+      .digest(process.env.PASSWORD_DIGEST);
+
+    await userDao.updateUserPassword(connection, userId, hashedPassword);
+    connection.release();
+
+    //3. return
+    return response(baseResponse.SUCCESS);
+  } catch (err) {
+    logger.error(`App - editUserNickname Service error\n: ${err.message}`);
+    return errResponse(baseResponse.DB_ERROR);
+  }
+};
+
 exports.findPassword = async function (schoolId) {
   try {
     const UserInfoBySchoolId = await userProvider.userStatCheckBySchoolId(
