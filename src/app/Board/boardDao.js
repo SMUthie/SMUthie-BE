@@ -34,7 +34,8 @@ async function selectAllReviewImageByStore(connection, storeIndex) {
   const query = `
   SELECT Review.image_url
   FROM Review 
-  WHERE Review.store_idx = ? ;
+  WHERE Review.store_idx = ? 
+  ORDER BY created_at DESC;
   `;
   const [resultRows] = await connection.query(query, storeIndex);
   return resultRows;
