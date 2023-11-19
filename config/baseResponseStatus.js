@@ -160,6 +160,12 @@ module.exports = {
     message: '메뉴 인덱스를 입력해주세요',
   },
 
+  REVIEW_IDX_EMPTY: {
+    isSuccess: false,
+    code: 2022,
+    message: '리뷰글 인덱스를 입력해주세요',
+  },
+
   // Response error
   SIGNUP_REDUNDANT_EMAIL: {
     isSuccess: false,
