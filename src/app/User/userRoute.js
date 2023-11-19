@@ -30,6 +30,8 @@ module.exports = function (app) {
 
   app.get('/app/user/refresh', verifyAToken, user.refreshJWT);
 
+  app.patch('/app/user/changePW', verifyAToken, user.changePassword);
+
   app.post('/app/user/tempPW', user.findPassword);
 
   app.patch('/app/user/changeName', verifyAToken, user.changeName);
