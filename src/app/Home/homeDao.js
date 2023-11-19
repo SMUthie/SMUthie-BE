@@ -2,10 +2,11 @@ const { getSchoolMeal } = require('../../../crawling/mealDb');
 
 // 교내 카페 정보 조회
 async function selectSchoolCafe(connection) {
-  const selectSchoolCafeQuery = `
-                SELECT name, time, address
-                FROM Store
-                WHERE category = 'C' 
+                const selectSchoolCafeQuery = `
+                SELECT name, time, address, image_url
+                FROM Store, Menu
+                WHERE Store.store_idx = Menu.store_idx
+                  AND category = 'C' 
                   AND address like '%상명대학교%';
                 `;
   const [cafeRows] = await connection.query(selectSchoolCafeQuery);
