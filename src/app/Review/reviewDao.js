@@ -5,7 +5,8 @@ async function selectReviewList(connection, storeIdx) {
     FROM SMUthie.Review, SMUthie.ReviewMenu, SMUthie.Menu
     WHERE Review.store_idx = ?
       AND ReviewMenu.review_idx = Review.review_idx
-      AND ReviewMenu.menu_idx = Menu.menu_idx;
+      AND ReviewMenu.menu_idx = Menu.menu_idx
+    ORDER BY created_at DESC;
     `;
   const [reviewRows] = await connection.query(selectReviewListQuery, storeIdx);
   return reviewRows;
