@@ -165,7 +165,7 @@ async function deleteUserLikeReview(connection, userIdx, reviewIdx) {
 async function getReviewLikes(connection, reviewIdx) {
   const getReviewLikesQuery = `
     SELECT likes
-    FROM review
+    FROM Review
     WHERE review_idx = ?;
   `;
 
@@ -176,7 +176,7 @@ async function getReviewLikes(connection, reviewIdx) {
 // 특정 리뷰글 좋아요 수 업데이트
 async function setReviewLikes(connection, reviewIdx, newLikes) {
   const setReviewLikesQuery = `
-    UPDATE review
+    UPDATE Review
     SET likes = ?
     WHERE review_idx = ?;
   `;
@@ -212,7 +212,7 @@ async function deleteUserUnlikeReview(connection, userIdx, reviewIdx) {
 async function getReviewUnlikes(connection, reviewIdx) {
   const getReviewUnlikesQuery = `
     SELECT unlikes
-    FROM review
+    FROM Review
     WHERE review_idx = ?;
   `;
 
@@ -223,7 +223,7 @@ async function getReviewUnlikes(connection, reviewIdx) {
 // 특정 리뷰글 싫어요 수 업데이트
 async function setReviewUnlikes(connection, reviewIdx, newUnlikes) {
   const setReviewUnlikesQuery = `
-    UPDATE review
+    UPDATE Review
     SET unlikes = ?
     WHERE review_idx = ?;
   `;
