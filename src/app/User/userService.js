@@ -91,6 +91,7 @@ exports.postSignIn = async function (student_id, password) {
 
     return response(baseResponse.SUCCESS, {
       user_idx: userRows[0].user_idx,
+      nickname: userRows[0].nickname,
       access_token: NEW_A_TOKEN,
       refresh_token: NEW_R_TOKEN,
     });

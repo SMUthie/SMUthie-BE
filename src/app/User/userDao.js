@@ -82,7 +82,7 @@ async function countSchoolId(connection, schoolId) {
 
 async function selectLoginUserStudentId(connection, student_id) {
   const selectLoginUserStudentIdQuery = `
-                 SELECT user_idx, pw, stat, token
+                 SELECT user_idx, pw, stat, token, nickname
                  FROM User
                  WHERE student_id=?;
                  `;
