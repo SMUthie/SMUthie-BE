@@ -11,7 +11,8 @@ exports.getSchoolCafe = async function (req, res) {
   const cafeListResult = await homeProvider.retrieveSchoolCafe();
 
   for(let i = 0; i < cafeListResult.length; i++) {
-    console.log(cafeListResult[i]['address'].split('상명대학교 ')[1]);
+    const location = cafeListResult[i]['address'].split('상명대학교 ')[1];
+    cafeListResult[i]['address'] = location;
   }
   
   return res.send(response(baseResponse.SUCCESS, cafeListResult));
