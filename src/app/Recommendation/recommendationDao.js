@@ -4,7 +4,6 @@ async function selectRecommendationList(connection, isUp, isRice, isSoup, isMeat
                 SELECT Store.name, Menu.menu_name, Menu.likes
                 FROM SMUthie.Store, SMUthie.Menu 
                 WHERE Store.store_idx = Menu.store_idx
-                ORDER BY Menu.likes DESC;
                 `;
 
   const params = [];
