@@ -9,11 +9,16 @@ const { response, errResponse } = require('../../../config/response');
  */
 exports.getSchoolCafe = async function (req, res) {
   const cafeListResult = await homeProvider.retrieveSchoolCafe();
+
+  for(let i = 0; i < cafeListResult.length; i++) {
+    console.log(cafeListResult[i]['address'].split('상명대학교 ')[1]);
+  }
+  
   return res.send(response(baseResponse.SUCCESS, cafeListResult));
 };
 
 /**
- * API No. 1
+ * API No. 2
  * API Name : 안다미로 정보 조회 API
  * [GET] /app/home/andamiro
  */
