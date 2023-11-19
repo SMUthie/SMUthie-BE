@@ -23,5 +23,14 @@ exports.getRecommendation = async function (req, res) {
       isMeat,
       isSpicy
     );
+
+    for (let i = 0; i < recommendationListResult.length; i++) {
+      if (recommendationListResult[i]['menu_name'] === '메뉴판') {
+          recommendationListResult.splice(i, 1);
+          i--;
+      }
+  }
+  // console.log(recommendationListResult); 
+
   return res.send(response(baseResponse.SUCCESS, recommendationListResult));
 };
