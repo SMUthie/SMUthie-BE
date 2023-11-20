@@ -88,7 +88,7 @@ exports.sendEmail = async function (schoolId) {
 
   //이메일 보내기
   const AUTH_EMAIL_HTML = await renderAuthEmail(AUTH_URL); //보낼 이메일 내용을 랜더링하기
-  sendEmailUseSchoolId(schoolId, '스무디 학생 인증', AUTH_EMAIL_HTML); // 해당 내용을 학번으로 이메일 보내기
+  sendEmailUseSchoolId(schoolId, '슴우디 학생 인증', AUTH_EMAIL_HTML); // 해당 내용을 학번으로 이메일 보내기
   return response(baseResponseStatus.SUCCESS);
 };
 
